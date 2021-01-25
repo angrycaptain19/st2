@@ -129,7 +129,7 @@ class PythonRunner(GitWorktreeActionRunner):
         LOG.debug('Getting user.')
         user = self.get_user()
         LOG.debug('Serializing parameters.')
-        serialized_parameters = json.dumps(action_parameters if action_parameters else {})
+        serialized_parameters = json.dumps(action_parameters or {})
         LOG.debug('Getting virtualenv_path.')
         virtualenv_path = get_sandbox_virtualenv_path(pack=pack)
         LOG.debug('Getting python path.')
@@ -378,19 +378,15 @@ class PythonRunner(GitWorktreeActionRunner):
 
         :rtype: ``str``
         """
-        if action_status is not None:
-            if exit_code == 0 and action_status is True:
-                status = LIVEACTION_STATUS_SUCCEEDED
-            elif exit_code == 0 and action_status is False:
-                status = LIVEACTION_STATUS_FAILED
-            else:
-                status = LIVEACTION_STATUS_FAILED
+        if (
+            exit_code == 0
+            and action_status is True
+            or action_status is None
+            and exit_code == 0
+        ):
+            status = LIVEACTION_STATUS_SUCCEEDED
         else:
-            if exit_code == 0:
-                status = LIVEACTION_STATUS_SUCCEEDED
-            else:
-                status = LIVEACTION_STATUS_FAILED
-
+            status = LIVEACTION_STATUS_FAILED
         if timed_out:
             status = LIVEACTION_STATUS_TIMED_OUT
 
@@ -409,10 +405,11 @@ class PythonRunner(GitWorktreeActionRunner):
             env_vars.update(self._env)
 
         # Remove "blacklisted" environment variables
-        to_delete = []
-        for key, value in env_vars.items():
-            if key.lower() in BLACKLISTED_ENV_VARS:
-                to_delete.append(key)
+        to_delete = [
+            key
+            for key, value in env_vars.items()
+            if key.lower() in BLACKLISTED_ENV_VARS
+        ]
 
         for key in to_delete:
             LOG.debug('User specified environment variable "%s" which is being ignored...' %

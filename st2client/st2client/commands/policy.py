@@ -48,13 +48,12 @@ class PolicyTypeListCommand(resource.ResourceListCommand):
 
     @resource.add_auth_token_to_kwargs_from_cli
     def run(self, args, **kwargs):
-        if args.resource_type:
-            filters = {'resource_type': args.resource_type}
-            filters.update(**kwargs)
-            instances = self.manager.query(**filters)
-            return instances
-        else:
+        if not args.resource_type:
             return self.manager.get_all(**kwargs)
+
+        filters = {'resource_type': args.resource_type}
+        filters.update(**kwargs)
+        return self.manager.query(**filters)
 
 
 class PolicyTypeGetCommand(resource.ResourceGetCommand):
@@ -91,20 +90,20 @@ class PolicyListCommand(resource.ContentPackResourceListCommand):
 
     @resource.add_auth_token_to_kwargs_from_cli
     def run(self, args, **kwargs):
-        if args.resource_ref or args.policy_type:
-            filters = {}
-
-            if args.resource_ref:
-                filters['resource_ref'] = args.resource_ref
-
-            if args.policy_type:
-                filters['policy_type'] = args.policy_type
-
-            filters.update(**kwargs)
-
-            return self.manager.query(**filters)
-        else:
+        if not args.resource_ref and not args.policy_type:
             return self.manager.get_all(**kwargs)
+
+        filters = {}
+
+        if args.resource_ref:
+            filters['resource_ref'] = args.resource_ref
+
+        if args.policy_type:
+            filters['policy_type'] = args.policy_type
+
+        filters.update(**kwargs)
+
+        return self.manager.query(**filters)
 
 
 class PolicyGetCommand(resource.ContentPackResourceGetCommand):

@@ -124,19 +124,18 @@ class ActionChainRunnerPauseResumeTest(ExecutionDbTestCase):
 
     def _wait_for_status(self, liveaction, status, interval=0.1, retries=100):
         # Wait until the liveaction reaches status.
-        for i in range(0, retries):
+        for _ in range(retries):
             liveaction = LiveAction.get_by_id(str(liveaction.id))
-            if liveaction.status != status:
-                eventlet.sleep(interval)
-                continue
-            else:
+            if liveaction.status == status:
                 break
 
+            eventlet.sleep(interval)
+            continue
         return liveaction
 
     def _wait_for_children(self, execution, interval=0.1, retries=100):
         # Wait until the execution has children.
-        for i in range(0, retries):
+        for _ in range(retries):
             execution = ActionExecution.get_by_id(str(execution.id))
             if len(getattr(execution, 'children', [])) <= 0:
                 eventlet.sleep(interval)

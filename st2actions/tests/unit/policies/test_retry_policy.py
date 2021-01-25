@@ -231,8 +231,7 @@ class RetryPolicyTestCase(CleanDbTestCase):
         live_action_db, execution_db = action_service.request(liveaction)
 
         live_action_db.status = LIVEACTION_STATUS_TIMED_OUT
-        live_action_db.context['policies'] = {}
-        live_action_db.context['policies']['retry'] = {'retry_count': 2}
+        live_action_db.context['policies'] = {'retry': {'retry_count': 2}}
         execution_db.status = LIVEACTION_STATUS_TIMED_OUT
         LiveAction.add_or_update(live_action_db)
         ActionExecution.add_or_update(execution_db)

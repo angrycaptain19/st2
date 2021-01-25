@@ -104,17 +104,18 @@ class RuleEnforcementViewController(ResourceController):
         execution_dbs = ActionExecution.query(id__in=execution_ids,
                                               only_fields=only_fields)
 
-        execution_dbs_by_id = {}
-        for execution_db in execution_dbs:
-            execution_dbs_by_id[str(execution_db.id)] = execution_db
+        execution_dbs_by_id = {
+            str(execution_db.id): execution_db for execution_db in execution_dbs
+        }
 
         # 2. Retrieve corresponding trigger instance objects
         trigger_instance_dbs = TriggerInstance.query(id__in=list(trigger_instance_ids))
 
-        trigger_instance_dbs_by_id = {}
+        trigger_instance_dbs_by_id = {
+            str(trigger_instance_db.id): trigger_instance_db
+            for trigger_instance_db in trigger_instance_dbs
+        }
 
-        for trigger_instance_db in trigger_instance_dbs:
-            trigger_instance_dbs_by_id[str(trigger_instance_db.id)] = trigger_instance_db
 
         # Ammend rule enforcement objects with additional data
         for rule_enforcement_api in rule_enforcement_apis:

@@ -159,7 +159,7 @@ class ActionExecutionsControllerMixin(BaseRestControllerMixin):
                             context_string=None, show_secrets=False):
         # Initialize execution context if it does not exist.
         if not hasattr(liveaction, 'context'):
-            liveaction.context = dict()
+            liveaction.context = {}
 
         liveaction.context['user'] = user
         liveaction.context['pack'] = action_db.pack
@@ -346,13 +346,12 @@ class ActionExecutionOutputController(ActionExecutionsControllerMixin, ResourceC
             # pylint: disable=no-member
             output_dbs = ActionExecutionOutput.query(execution_id=execution_id, **query_filters)
 
-            output = ''.join([output_db.data for output_db in output_dbs])
+            output = ''.join(output_db.data for output_db in output_dbs)
             yield six.binary_type(output.encode('utf-8'))
 
         def make_response():
             app_iter = existing_output_iter()
-            res = Response(content_type='text/plain', app_iter=app_iter)
-            return res
+            return Response(content_type='text/plain', app_iter=app_iter)
 
         res = make_response()
         return res

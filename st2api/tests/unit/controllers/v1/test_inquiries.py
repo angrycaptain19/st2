@@ -189,7 +189,7 @@ class InquiryControllerTestCase(BaseInquiryControllerTestCase,
         """Test retrieval of a list of Inquiries
         """
         inquiry_count = 5
-        for i in range(inquiry_count):
+        for _ in range(inquiry_count):
             self._do_create_inquiry(INQUIRY_1, RESULT_DEFAULT)
         get_all_resp = self._do_get_all()
         inquiries = get_all_resp.json
@@ -212,7 +212,7 @@ class InquiryControllerTestCase(BaseInquiryControllerTestCase,
 
         # Create inquiries
         inquiry_count = 5
-        for i in range(inquiry_count):
+        for _ in range(inquiry_count):
             self._do_create_inquiry(INQUIRY_2, RESULT_DEFAULT)
         get_all_resp = self._do_get_all()
         inquiries = get_all_resp.json
@@ -236,7 +236,7 @@ class InquiryControllerTestCase(BaseInquiryControllerTestCase,
         # Create inquiries
         inquiry_count = 5
         limit = 4
-        for i in range(inquiry_count):
+        for _ in range(inquiry_count):
             self._do_create_inquiry(INQUIRY_1, RESULT_DEFAULT)
         get_all_resp = self._do_get_all(limit=limit)
         inquiries = get_all_resp.json

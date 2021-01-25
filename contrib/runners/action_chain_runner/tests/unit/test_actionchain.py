@@ -212,8 +212,7 @@ class TestActionChainRunner(ExecutionDbTestCase):
             else:
                 status = LIVEACTION_STATUS_SUCCEEDED
             request.return_value = (DummyActionExecution(status=status), None)
-            liveaction = original_run_action(*args, **kwargs)
-            return liveaction
+            return original_run_action(*args, **kwargs)
 
         chain_runner._run_action = mock_run_action
         action_ref = ResourceReference.to_string_reference(name=ACTION_1.name, pack=ACTION_1.pack)
@@ -378,10 +377,11 @@ class TestActionChainRunner(ExecutionDbTestCase):
         # based on the chain the callcount is known to be 2. Not great but works.
         self.assertEqual(request.call_count, 2)
 
-        error_count = 0
-        for task_result in results['tasks']:
-            if task_result['result'].get('error', None):
-                error_count += 1
+        error_count = sum(
+            1
+            for task_result in results['tasks']
+            if task_result['result'].get('error', None)
+        )
 
         self.assertEqual(error_count, 2)
 
@@ -688,7 +688,6 @@ class TestActionChainRunner(ExecutionDbTestCase):
             expected_error = ('Failed rendering value for publish parameter "p1" in '
                               'task "c2" (template string={{ not_defined }}):')
             self.assertIn(expected_error, six.text_type(e))
-            pass
         else:
             self.fail('Exception was not thrown')
 

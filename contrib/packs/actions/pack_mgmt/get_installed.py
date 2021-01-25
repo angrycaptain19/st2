@@ -67,8 +67,9 @@ class GetInstalled(Action):
             repo = Repo(pack_path)
             git_status = "Status:\n%s\n\nRemotes:\n%s" % (
                 repo.git.status().split('\n')[0],
-                "\n".join([remote.url for remote in repo.remotes])
+                "\n".join(remote.url for remote in repo.remotes),
             )
+
 
             ahead_behind = repo.git.rev_list(
                 '--left-right', '--count', 'HEAD...origin/master'

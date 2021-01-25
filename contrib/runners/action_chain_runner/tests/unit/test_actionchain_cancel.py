@@ -108,7 +108,7 @@ class ActionChainRunnerPauseResumeTest(ExecutionDbTestCase):
 
     def _wait_for_children(self, execution, interval=0.1, retries=100):
         # Wait until the execution has children.
-        for i in range(0, retries):
+        for _ in range(retries):
             execution = ActionExecution.get_by_id(str(execution.id))
             if len(getattr(execution, 'children', [])) <= 0:
                 eventlet.sleep(interval)

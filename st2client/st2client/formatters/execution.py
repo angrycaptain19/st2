@@ -97,31 +97,31 @@ class ExecutionResult(formatters.Formatter):
 
             output_schema = entry.get('action', {}).get('output_schema')
             schema_check = get_config()['general']['silence_schema_output']
-            if not output_schema and kwargs.get('with_schema'):
-                rendered_schema = {
-                    'output_schema': schema.render_output_schema_from_output(entry['result'])
-                }
+            if not output_schema:
+                if kwargs.get('with_schema'):
+                    rendered_schema = {
+                        'output_schema': schema.render_output_schema_from_output(entry['result'])
+                    }
 
-                rendered_schema = yaml.safe_dump(rendered_schema, default_flow_style=False)
-                output += '\n'
-                output += _print_bordered(
-                    "Based on the action output the following inferred schema was built:"
-                    "\n\n"
-                    "%s" % rendered_schema
-                )
-            elif not output_schema and not schema_check:
-                output += (
-                    "\n\n** This action does not have an output_schema. "
-                    "Run again with --with-schema to see a suggested schema."
-                )
+                    rendered_schema = yaml.safe_dump(rendered_schema, default_flow_style=False)
+                    output += '\n'
+                    output += _print_bordered(
+                        "Based on the action output the following inferred schema was built:"
+                        "\n\n"
+                        "%s" % rendered_schema
+                    )
+                elif not schema_check:
+                    output += (
+                        "\n\n** This action does not have an output_schema. "
+                        "Run again with --with-schema to see a suggested schema."
+                    )
 
         if six.PY3:
             return strutil.unescape(str(output))
-        else:
-            # Assume Python 2
-            try:
-                result = strutil.unescape(str(output)).decode('unicode_escape').encode('utf-8')
-            except UnicodeDecodeError:
-                # String contains a value which is not an unicode escape sequence, ignore the error
-                result = strutil.unescape(str(output))
-            return result
+        # Assume Python 2
+        try:
+            result = strutil.unescape(str(output)).decode('unicode_escape').encode('utf-8')
+        except UnicodeDecodeError:
+            # String contains a value which is not an unicode escape sequence, ignore the error
+            result = strutil.unescape(str(output))
+        return result

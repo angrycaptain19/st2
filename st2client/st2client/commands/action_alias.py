@@ -119,8 +119,7 @@ class ActionAliasExecuteCommand(resource.ResourceCommand):
         payload.source_channel = 'cli'
 
         alias_execution_mgr = self.app.client.managers['ActionAliasExecution']
-        execution = alias_execution_mgr.match_and_execute(payload)
-        return execution
+        return alias_execution_mgr.match_and_execute(payload)
 
     def run_and_print(self, args, **kwargs):
         execution = self.run(args, **kwargs)

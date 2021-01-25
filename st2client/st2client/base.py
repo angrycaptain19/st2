@@ -167,11 +167,12 @@ class BaseCLIApp(object):
         """
         rc_options = self._parse_config_file(
             args=args, validate_config_permissions=validate_config_permissions)
-        result = {}
-        for kwarg_name, (section, option) in six.iteritems(CONFIG_OPTION_TO_CLIENT_KWARGS_MAP):
-            result[kwarg_name] = rc_options.get(section, {}).get(option, None)
-
-        return result
+        return {
+            kwarg_name: rc_options.get(section, {}).get(option, None)
+            for kwarg_name, (section, option) in six.iteritems(
+                CONFIG_OPTION_TO_CLIENT_KWARGS_MAP
+            )
+        }
 
     def _parse_config_file(self, args, validate_config_permissions=False):
         config_file_path = self._get_config_file_path(args=args)
@@ -180,8 +181,7 @@ class BaseCLIApp(object):
                                  validate_config_exists=False,
                                  validate_config_permissions=validate_config_permissions,
                                  log=self.LOG)
-        result = parser.parse()
-        return result
+        return parser.parse()
 
     def _get_config_file_path(self, args):
         """
@@ -332,9 +332,7 @@ class BaseCLIApp(object):
         expire_timestamp = parse_isotime(token_obj.expiry)
         expire_timestamp = calendar.timegm(expire_timestamp.timetuple())
 
-        data = {}
-        data['token'] = token
-        data['expire_timestamp'] = expire_timestamp
+        data = {'token': token, 'expire_timestamp': expire_timestamp}
         data = json.dumps(data)
 
         # Note: We explictly use fdopen instead of open + chmod to avoid a security issue.
@@ -361,8 +359,7 @@ class BaseCLIApp(object):
         Retrieve cached token path for the provided username.
         """
         file_name = 'token-%s' % (username)
-        result = os.path.abspath(os.path.join(ST2_CONFIG_DIRECTORY, file_name))
-        return result
+        return os.path.abspath(os.path.join(ST2_CONFIG_DIRECTORY, file_name))
 
     def _print_config(self, args):
         config = self._parse_config_file(args=args, validate_config_permissions=False)

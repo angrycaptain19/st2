@@ -131,7 +131,7 @@ class WebhooksController(object):
         trace_context = self._create_trace_context(trace_tag=headers.pop(TRACE_TAG_HEADER, None),
                                                    hook=hook)
 
-        if hook == 'st2' or hook == 'st2/':
+        if hook in ['st2', 'st2/']:
             # When using st2 or system webhook, body needs to always be a dict
             if not isinstance(body, dict):
                 type_string = get_json_type_for_python_value(body)
@@ -156,10 +156,7 @@ class WebhooksController(object):
                 return abort(http_client.NOT_FOUND, msg)
 
             triggers = self._hooks.get_triggers_for_hook(hook)
-            payload = {}
-
-            payload['headers'] = headers
-            payload['body'] = body
+            payload = {'headers': headers, 'body': body}
 
             # Dispatch trigger instance for each of the trigger found
             for trigger_dict in triggers:
@@ -214,10 +211,7 @@ class WebhooksController(object):
         return trigger['parameters']['url'].strip('/')
 
     def _get_headers_as_dict(self, headers):
-        headers_dict = {}
-        for key, value in headers.items():
-            headers_dict[key] = value
-        return headers_dict
+        return {key: value for key, value in headers.items()}
 
     def _filter_authentication_headers(self, headers):
         auth_headers = [HEADER_API_KEY_ATTRIBUTE_NAME, HEADER_ATTRIBUTE_NAME, 'Cookie']
@@ -248,8 +242,7 @@ class WebhooksController(object):
         self.remove_trigger(trigger=trigger)
 
     def _sanitize_trigger(self, trigger):
-        sanitized = TriggerAPI.from_model(trigger).to_dict()
-        return sanitized
+        return TriggerAPI.from_model(trigger).to_dict()
 
 
 webhooks_controller = WebhooksController()

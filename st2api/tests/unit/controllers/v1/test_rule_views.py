@@ -88,8 +88,7 @@ class RuleViewControllerTestCase(FunctionalTest,
         self.assertEqual(resp.status_int, http_client.NOT_FOUND)
 
     def _insert_mock_models(self):
-        rule_ids = [rule['id'] for rule in self.rules.values()]
-        return rule_ids
+        return [rule['id'] for rule in self.rules.values()]
 
     def _delete_mock_models(self, object_ids):
         return None

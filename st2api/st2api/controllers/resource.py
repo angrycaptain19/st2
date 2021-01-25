@@ -74,8 +74,7 @@ def parameter_validation(validator, properties, instance, schema):
 
     parameter_specific_validator = util_schema.CustomValidator(parameter_specific_schema)
 
-    for error in parameter_specific_validator.iter_errors(instance=instance):
-        yield error
+    yield from parameter_specific_validator.iter_errors(instance=instance)
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -141,7 +140,7 @@ class ResourceController(object):
 
         exclude_fields = exclude_fields or []
         include_fields = include_fields or []
-        query_options = query_options if query_options else self.query_options
+        query_options = query_options or self.query_options
 
         if exclude_fields and include_fields:
             msg = ('exclude_fields and include_fields arguments are mutually exclusive. '
@@ -174,7 +173,7 @@ class ResourceController(object):
             db_sort_values.append(sort_value)
 
         default_sort_values = copy.copy(query_options.get('sort'))
-        raw_filters['sort'] = db_sort_values if db_sort_values else default_sort_values
+        raw_filters['sort'] = db_sort_values or default_sort_values
 
         # TODO: To protect us from DoS, we need to make max_limit mandatory
         offset = int(offset)
@@ -261,8 +260,7 @@ class ResourceController(object):
         """
         Method which converts DB object to API object and performs any additional filtering.
         """
-        item = model.from_model(instance, **from_model_kwargs)
-        return item
+        return model.from_model(instance, **from_model_kwargs)
 
     def _get_one_by_id(self, id, requester_user, permission_type, exclude_fields=None,
                        include_fields=None, from_model_kwargs=None):
@@ -326,9 +324,7 @@ class ResourceController(object):
 
         from_model_kwargs = from_model_kwargs or {}
         from_model_kwargs.update(self.from_model_kwargs)
-        result = self.model.from_model(instance, **from_model_kwargs)
-
-        return result
+        return self.model.from_model(instance, **from_model_kwargs)
 
     def _get_one_by_pack_ref(self, pack_ref, exclude_fields=None, include_fields=None,
                              from_model_kwargs=None):
@@ -341,9 +337,7 @@ class ResourceController(object):
 
         from_model_kwargs = from_model_kwargs or {}
         from_model_kwargs.update(self.from_model_kwargs)
-        result = self.model.from_model(instance, **from_model_kwargs)
-
-        return result
+        return self.model.from_model(instance, **from_model_kwargs)
 
     def _get_by_id(self, resource_id, exclude_fields=None, include_fields=None):
         try:
@@ -481,11 +475,9 @@ class BaseResourceIsolationControllerMixin(object):
     def resource_model_filter(self, model, instance, requester_user=None, **from_model_kwargs):
         # RBAC or permission isolation is disabled, bail out
         if not (cfg.CONF.rbac.enable and cfg.CONF.rbac.permission_isolation):
-            result = super(BaseResourceIsolationControllerMixin, self).resource_model_filter(
+            return super(BaseResourceIsolationControllerMixin, self).resource_model_filter(
                 model=model, instance=instance, requester_user=requester_user,
                 **from_model_kwargs)
-
-            return result
 
         rbac_utils = get_rbac_backend().get_utils_class()
         user_is_admin = rbac_utils.user_is_admin(user_db=requester_user)
@@ -552,7 +544,7 @@ class ContentPackResourceController(ResourceController):
     def _get_all(self, exclude_fields=None, include_fields=None,
                  sort=None, offset=0, limit=None, query_options=None,
                  from_model_kwargs=None, raw_filters=None, requester_user=None):
-        resp = super(ContentPackResourceController,
+        return super(ContentPackResourceController,
                      self)._get_all(exclude_fields=exclude_fields,
                                     include_fields=include_fields,
                                     sort=sort,
@@ -562,8 +554,6 @@ class ContentPackResourceController(ResourceController):
                                     from_model_kwargs=from_model_kwargs,
                                     raw_filters=raw_filters,
                                     requester_user=requester_user)
-
-        return resp
 
     def _get_by_ref_or_id(self, ref_or_id, exclude_fields=None, include_fields=None):
         """
@@ -608,10 +598,9 @@ class ContentPackResourceController(ResourceController):
         except Exception:
             return None
 
-        resource_db = self.access.query(name=ref.name, pack=ref.pack,
+        return self.access.query(name=ref.name, pack=ref.pack,
                                         exclude_fields=exclude_fields,
                                         only_fields=include_fields).first()
-        return resource_db
 
 
 def validate_limit_query_param(limit, requester_user=None):

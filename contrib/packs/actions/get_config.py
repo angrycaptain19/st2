@@ -21,9 +21,7 @@ from st2common.runners.base_action import Action
 
 class RenderTemplateAction(Action):
     def run(self):
-        result = {
+        return {
             'pack_group': utils.get_pack_group(),
             'pack_path': utils.get_system_packs_base_path()
         }
-
-        return result

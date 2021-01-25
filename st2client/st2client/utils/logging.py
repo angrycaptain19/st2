@@ -34,10 +34,7 @@ class LogLevelFilter(logging.Filter):
 
     def filter(self, record):
         level = record.levelno
-        if level in self._log_levels:
-            return False
-
-        return True
+        return level not in self._log_levels
 
 
 def set_log_level_for_all_handlers(logger, level=logging.DEBUG):

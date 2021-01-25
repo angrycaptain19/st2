@@ -441,9 +441,10 @@ class PacksControllerTestCase(FunctionalTest,
             'dummy_pack_3',
             'dummy_pack_10',
         ]
-        mock_return_value = {}
-        for pack_name in pack_names:
-            mock_return_value[pack_name] = os.path.join(packs_base_path, pack_name)
+        mock_return_value = {
+            pack_name: os.path.join(packs_base_path, pack_name)
+            for pack_name in pack_names
+        }
 
         mock_get_packs.return_value = mock_return_value
 

@@ -18,11 +18,7 @@
 import sys
 import json
 
-if len(sys.argv) >= 2:
-    time = sys.argv[1]
-else:
-    time = None
-
+time = sys.argv[1] if len(sys.argv) >= 2 else None
 loadAvgFile = "/proc/loadavg"
 cpuInfoFile = "/proc/cpuinfo"
 cpus = 0
@@ -52,11 +48,11 @@ output['1'] = str(float(load[0]) / cpus)
 output['5'] = str(float(load[1]) / cpus)
 output['15'] = str(float(load[2]) / cpus)
 
-if time == '1' or time == 'one':
+if time in ['1', 'one']:
     print(output['1'])
-elif time == '5' or time == 'five':
+elif time in ['5', 'five']:
     print(output['5'])
-elif time == '15' or time == 'fifteen':
+elif time in ['15', 'fifteen']:
     print(output['15'])
 else:
     print(json.dumps(output))

@@ -396,8 +396,8 @@ class LocalShellCommandRunnerTestCase(RunnerTestCase, CleanDbTestCase):
                                     local_runner.RUNNER_ON_BEHALF_USER: user,
                                     local_runner.RUNNER_KWARG_OP: kwarg_op,
                                     local_runner.RUNNER_TIMEOUT: timeout}
-        runner.context = dict()
-        runner.callback = dict()
+        runner.context = {}
+        runner.callback = {}
         runner.libs_dir_path = None
         runner.auth_token = mock.Mock()
         runner.auth_token.token = 'mock-token'
@@ -619,7 +619,7 @@ class LocalShellScriptRunnerTestCase(RunnerTestCase, CleanDbTestCase):
         runner.entry_point = entry_point
         runner.runner_parameters = {}
         runner.context = dict()
-        runner.callback = dict()
+        runner.callback = {}
         runner.libs_dir_path = None
         runner.auth_token = mock.Mock()
         runner.auth_token.token = 'mock-token'

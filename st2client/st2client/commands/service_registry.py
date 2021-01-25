@@ -75,8 +75,7 @@ class ServiceRegistryListGroupsCommand(resource.ResourceListCommand):
     def run(self, args, **kwargs):
         manager = self.app.client.managers['ServiceRegistryGroups']
 
-        groups = manager.list()
-        return groups
+        return manager.list()
 
 
 class ServiceRegistryListMembersCommand(resource.ResourceListCommand):

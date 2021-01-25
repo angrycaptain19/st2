@@ -35,7 +35,5 @@ class InjectTriggerAction(Action):
         # inside rulesengine service and could fail due to the user providing an invalid trigger
         # reference or similar.
         self.logger.debug('Injecting trigger "%s" with payload="%s"' % (trigger, str(payload)))
-        result = client.webhooks.post_generic_webhook(trigger=trigger, payload=payload,
+        return client.webhooks.post_generic_webhook(trigger=trigger, payload=payload,
                                                       trace_tag=trace_tag)
-
-        return result

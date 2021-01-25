@@ -67,10 +67,9 @@ class WorkerTestCase(DbTestCase):
         action_ref = ResourceReference(name=action_db.name, pack=action_db.pack).ref
         parameters = params
         context = {'user': cfg.CONF.system_user.user}
-        liveaction_db = LiveActionDB(status=status, start_timestamp=start_timestamp,
+        return LiveActionDB(status=status, start_timestamp=start_timestamp,
                                      action=action_ref, parameters=parameters,
                                      context=context)
-        return liveaction_db
 
     @mock.patch.object(LocalShellCommandRunner, 'run', mock.MagicMock(
         return_value=(action_constants.LIVEACTION_STATUS_SUCCEEDED, NON_UTF8_RESULT, None)))
@@ -114,7 +113,7 @@ class WorkerTestCase(DbTestCase):
             runner_thread = eventlet.spawn(action_worker._run_action, liveaction_db)
 
             # Wait for the worker up to 10s to add the liveaction to _running_liveactions.
-            for i in range(0, int(10 / 0.1)):
+            for _ in range(int(10 / 0.1)):
                 eventlet.sleep(0.1)
                 if len(action_worker._running_liveactions) > 0:
                     break

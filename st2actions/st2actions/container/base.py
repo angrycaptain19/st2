@@ -256,7 +256,7 @@ class RunnerContainer(object):
         is_async_runner = isinstance(runner, AsyncActionRunner)
         action_completed = status in action_constants.LIVEACTION_COMPLETED_STATES
 
-        if not is_async_runner or (is_async_runner and action_completed):
+        if not is_async_runner or action_completed:
             try:
                 self._delete_auth_token(runner.auth_token)
             except:
@@ -383,8 +383,9 @@ class RunnerContainer(object):
         }
 
         ttl = cfg.CONF.auth.service_token_ttl
-        token_db = access.create_token(username=user, ttl=ttl, metadata=metadata, service=True)
-        return token_db
+        return access.create_token(
+            username=user, ttl=ttl, metadata=metadata, service=True
+        )
 
     def _delete_auth_token(self, auth_token):
         if auth_token:

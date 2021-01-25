@@ -175,9 +175,7 @@ class ActionAliasController(resource.ContentPackResourceController):
 
         extra = {'old_action_alias_db': old_action_alias_db, 'new_action_alias_db': action_alias_db}
         LOG.audit('Action alias updated. ActionAlias.id=%s.' % (action_alias_db.id), extra=extra)
-        action_alias_api = ActionAliasAPI.from_model(action_alias_db)
-
-        return action_alias_api
+        return ActionAliasAPI.from_model(action_alias_db)
 
     def delete(self, ref_or_id, requester_user):
         """

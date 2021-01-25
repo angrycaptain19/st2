@@ -187,8 +187,7 @@ class WhoamiCommand(resource.ResourceCommand):
             *args, **kwargs)
 
     def run(self, args, **kwargs):
-        user_info = self.app.client.get_user_info(**kwargs)
-        return user_info
+        return self.app.client.get_user_info(**kwargs)
 
     def run_and_print(self, args, **kwargs):
         try:
@@ -257,8 +256,7 @@ class ApiKeyListCommand(resource.ResourceListCommand):
 
     @resource.add_auth_token_to_kwargs_from_cli
     def run(self, args, **kwargs):
-        filters = {}
-        filters['user'] = args.user
+        filters = {'user': args.user}
         filters.update(**kwargs)
         # show_secrets is not a filter but a query param. There is some special
         # handling for filters in the get method which reuqires this odd hack.

@@ -104,11 +104,7 @@ def fetch_requirements(requirements_file_path):
             if line.startswith(vcs_prefix) or line.startswith('-e %s' % (vcs_prefix)):
                 req_name = re.findall('.*#egg=(.+)([&|@]).*$', line)
 
-                if not req_name:
-                    req_name = re.findall('.*#egg=(.+?)$', line)
-                else:
-                    req_name = req_name[0]
-
+                req_name = re.findall('.*#egg=(.+?)$', line) if not req_name else req_name[0]
                 if not req_name:
                     raise ValueError('Line "%s" is missing "#egg=<package name>"' % (line))
 

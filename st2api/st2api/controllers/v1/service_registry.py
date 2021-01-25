@@ -37,10 +37,9 @@ class ServiceRegistryGroupsController(object):
         group_ids = list(coordinator.get_groups().get())
         group_ids = [item.decode('utf-8') for item in group_ids]
 
-        result = {
+        return {
             'groups': group_ids
         }
-        return result
 
 
 class ServiceRegistryGroupMembersController(object):

@@ -32,15 +32,13 @@ LOG = logging.getLogger(__name__)
 class WorkflowInspectionController(object):
 
     def mock_st2_ctx(self):
-        st2_ctx = {
+        return {
             'st2': {
                 'api_url': api_utils.get_full_public_api_url(),
                 'action_execution_id': uuid.uuid4().hex,
                 'user': cfg.CONF.system_user.user
             }
         }
-
-        return st2_ctx
 
     def post(self, wf_def):
         # Load workflow definition into workflow spec model.

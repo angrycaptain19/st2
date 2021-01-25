@@ -74,11 +74,9 @@ class RoleListCommand(resource.ResourceCommand):
             kwargs['system'] = args.system
 
         if args.system:
-            result = self.manager.query(**kwargs)
+            return self.manager.query(**kwargs)
         else:
-            result = self.manager.get_all(**kwargs)
-
-        return result
+            return self.manager.get_all(**kwargs)
 
     def run_and_print(self, args, **kwargs):
         instances = self.run(args, **kwargs)
@@ -145,11 +143,9 @@ class RoleAssignmentListCommand(resource.ResourceCommand):
             kwargs['remote'] = args.remote
 
         if args.role or args.user or args.remote or args.source:
-            result = self.manager.query(**kwargs)
+            return self.manager.query(**kwargs)
         else:
-            result = self.manager.get_all(**kwargs)
-
-        return result
+            return self.manager.get_all(**kwargs)
 
     def run_and_print(self, args, **kwargs):
         instances = self.run(args, **kwargs)

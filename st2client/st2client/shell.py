@@ -101,9 +101,9 @@ def get_stackstorm_version():
 
     :rtype: ``str``
     """
-    if 'dev' in __version__:
-        version = __version__
+    version = __version__
 
+    if 'dev' in __version__:
         if not os.path.isfile(PACKAGE_METADATA_FILE_PATH):
             return version
 
@@ -120,9 +120,6 @@ def get_stackstorm_version():
             return version
 
         version = '%s (%s)' % (version, git_revision)
-    else:
-        version = __version__
-
     return version
 
 

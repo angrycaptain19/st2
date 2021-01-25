@@ -178,10 +178,8 @@ class CLIConfigParser(object):
 
         for section, keys in six.iteritems(CONFIG_FILE_OPTIONS):
             for key, options in six.iteritems(keys):
-                key_type = options['type']
-                key_default_value = options['default']
-
                 if config.has_option(section, key):
+                    key_type = options['type']
                     if key_type in ['str', 'string']:
                         get_func = config.get
                     elif key_type in ['int', 'integer']:
@@ -197,6 +195,8 @@ class CLIConfigParser(object):
                     value = get_func(section, key)
                     result[section][key] = value
                 else:
+                    key_default_value = options['default']
+
                     result[section][key] = key_default_value
 
         return dict(result)

@@ -37,9 +37,7 @@ class BaseRestControllerMixin(object):
         :rtype: ``dict``
         """
         query_string = request.query_string
-        query_params = dict(urlparse.parse_qsl(query_string))
-
-        return query_params
+        return dict(urlparse.parse_qsl(query_string))
 
     def _get_query_param_value(self, request, param_name, param_type, default_value=None):
         """

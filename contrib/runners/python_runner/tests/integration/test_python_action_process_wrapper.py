@@ -90,7 +90,7 @@ class PythonRunnerActionWrapperProcessTestCase(unittest2.TestCase):
         run_times = []
 
         count = 8
-        for i in range(0, count):
+        for i in range(count):
             _, _, stderr = run_command(command_string, shell=True)
             stderr = stderr.strip().split('\n')[-1]
             run_time_seconds = float(stderr)
@@ -105,14 +105,18 @@ class PythonRunnerActionWrapperProcessTestCase(unittest2.TestCase):
         # Test case which verifies that actions with large configs and a lot of parameters work
         # fine. Config and parameters are passed to wrapper as command line argument so there is an
         # upper limit on the size.
-        config = {}
-        for index in range(0, 50):
-            config['key_%s' % (index)] = 'value value foo %s' % (index)
+        config = {
+            'key_%s' % (index): 'value value foo %s' % (index)
+            for index in range(50)
+        }
+
         config = json.dumps(config)
 
-        parameters = {}
-        for index in range(0, 30):
-            parameters['param_foo_%s' % (index)] = 'some param value %s' % (index)
+        parameters = {
+            'param_foo_%s' % (index): 'some param value %s' % (index)
+            for index in range(30)
+        }
+
         parameters = json.dumps(parameters)
 
         file_path = os.path.join(BASE_DIR, '../../../../examples/actions/noop.py')

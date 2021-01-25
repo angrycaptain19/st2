@@ -11,13 +11,10 @@ class MockCoreRemoteAction(Action):
             return None
 
         host_list = hosts.split(',')
-        results = {}
-        for h in hosts:
-            results[h] = {
+        return {h: {
                 'failed': False,
                 'return_code': 0,
                 'stderr': '',
                 'succeeded': True,
                 'stdout': cmd,
-            }
-        return results
+            } for h in hosts}

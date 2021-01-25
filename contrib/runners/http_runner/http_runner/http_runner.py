@@ -315,18 +315,14 @@ class HTTPClient(object):
         """
         Normalize the header keys by lowercasing all the keys.
         """
-        result = {}
-        for key, value in headers.items():
-            result[key.lower()] = value
-
-        return result
+        return {key.lower(): value for key, value in headers.items()}
 
     def _is_json_content(self):
         normalized = self._normalize_headers(self.headers)
         return normalized.get('content-type', None) == 'application/json'
 
     def _cast_object(self, value):
-        if isinstance(value, str) or isinstance(value, six.text_type):
+        if isinstance(value, (str, six.text_type)):
             try:
                 return json.loads(value)
             except:
@@ -344,10 +340,7 @@ class HTTPClient(object):
 
         host = self._get_host_from_url(url=url)
 
-        if host in self.url_hosts_blacklist:
-            return True
-
-        return False
+        return host in self.url_hosts_blacklist
 
     def _is_url_whitelisted(self, url):
         """
@@ -358,10 +351,7 @@ class HTTPClient(object):
 
         host = self._get_host_from_url(url=url)
 
-        if host in self.url_hosts_whitelist:
-            return True
-
-        return False
+        return host in self.url_hosts_whitelist
 
     def _get_host_from_url(self, url):
         """

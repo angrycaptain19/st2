@@ -783,7 +783,7 @@ class PythonRunnerTestCase(RunnerTestCase, CleanDbTestCase):
         runner = self._get_mock_runner_obj()
         runner.entry_point = ECHOER_ACTION_PATH
         runner.pre_run()
-        large_value = ''.join(['1' for _ in range(MAX_PARAM_LENGTH)])
+        large_value = ''.join('1' for _ in range(MAX_PARAM_LENGTH))
         (status, output, _) = runner.run({'action_input': large_value})
         self.assertEqual(status, LIVEACTION_STATUS_SUCCEEDED)
         self.assertIsNotNone(output)
@@ -797,7 +797,7 @@ class PythonRunnerTestCase(RunnerTestCase, CleanDbTestCase):
         # param based payload. The linux max includes all parts of the param
         # not just the value portion. So we need to subtract the remaining
         # overhead from the initial padding.
-        large_value = ''.join(['1' for _ in range(MAX_PARAM_LENGTH - 21)])
+        large_value = ''.join('1' for _ in range(MAX_PARAM_LENGTH - 21))
         (status, output, _) = runner.run({'action_input': large_value})
         self.assertEqual(status, LIVEACTION_STATUS_SUCCEEDED)
         self.assertIsNotNone(output)

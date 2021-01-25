@@ -65,11 +65,14 @@ class TraceBranch(resource.ResourceBranch):
 class SingleTraceDisplayMixin(object):
 
     def print_trace_details(self, trace, args, **kwargs):
-        options = {'attributes': TRACE_ATTRIBUTE_DISPLAY_ORDER if args.json else
-                   TRACE_HEADER_DISPLAY_ORDER}
-        options['json'] = args.json
-        options['yaml'] = args.yaml
-        options['attribute_transform_functions'] = self.attribute_transform_functions
+        options = {
+            'attributes': TRACE_ATTRIBUTE_DISPLAY_ORDER
+            if args.json
+            else TRACE_HEADER_DISPLAY_ORDER,
+            'json': args.json,
+            'yaml': args.yaml,
+            'attribute_transform_functions': self.attribute_transform_functions,
+        }
 
         formatter = execution_formatter.ExecutionResult
 
@@ -180,9 +183,14 @@ class TraceListCommand(resource.ResourceCommand, SingleTraceDisplayMixin):
                 args.attr = ['all']
             self.print_trace_details(trace=instances[0], args=args)
 
-            if not args.json and not args.yaml:
-                if args.last and count and count > args.last:
-                    table.SingleRowTable.note_box(self.resource_name, 1)
+            if (
+                not args.json
+                and not args.yaml
+                and args.last
+                and count
+                and count > args.last
+            ):
+                table.SingleRowTable.note_box(self.resource_name, 1)
         else:
             if args.json or args.yaml:
                 self.print_output(instances, table.MultiColumnTable,
@@ -270,7 +278,7 @@ class TraceGetCommand(resource.ResourceGetCommand, SingleTraceDisplayMixin):
         elif args.rule:
             component_id = args.rule
             component_type = 'rule'
-        elif args.trigger_instance:
+        else:
             component_id = args.trigger_instance
             component_type = 'trigger_instance'
 

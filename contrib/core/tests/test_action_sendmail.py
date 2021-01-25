@@ -270,7 +270,7 @@ class SendmailActionTestCase(RunnerTestCase, CleanDbTestCase, CleanFilesTestCase
         runner.entry_point = entry_point
         runner.runner_parameters = {}
         runner.context = dict()
-        runner.callback = dict()
+        runner.callback = {}
         runner.libs_dir_path = None
         runner.auth_token = mock.Mock()
         runner.auth_token.token = 'mock-token'

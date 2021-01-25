@@ -71,8 +71,7 @@ def get_url_without_trailing_slash(value):
 
     :rtype: ``str``
     """
-    result = value[:-1] if value.endswith('/') else value
-    return result
+    return value[:-1] if value.endswith('/') else value
 
 
 class HTTPClient(object):
@@ -161,5 +160,4 @@ class HTTPClient(object):
         # URL
         parts.extend([pquote(request.url)])
 
-        curl_line = ' '.join(parts)
-        return curl_line
+        return ' '.join(parts)

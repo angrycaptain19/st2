@@ -114,8 +114,7 @@ class PermissionTypesController(object):
         rbac_utils = get_rbac_backend().get_utils_class()
         rbac_utils.assert_user_is_admin(user_db=requester_user)
 
-        result = get_resource_permission_types_with_descriptions()
-        return result
+        return get_resource_permission_types_with_descriptions()
 
     def get_one(self, resource_type, requester_user):
         """

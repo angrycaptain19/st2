@@ -417,10 +417,9 @@ class RunnerContainerTest(DbTestCase):
         action_ref = ResourceReference(name=action_db.name, pack=action_db.pack).ref
         parameters = params
         context = {'user': cfg.CONF.system_user.user}
-        liveaction_db = LiveActionDB(status=status, start_timestamp=start_timestamp,
+        return LiveActionDB(status=status, start_timestamp=start_timestamp,
                                      action=action_ref, parameters=parameters,
                                      context=context)
-        return liveaction_db
 
     def _get_failingaction_exec_db_model(self, params):
         status = action_constants.LIVEACTION_STATUS_REQUESTED
@@ -430,10 +429,9 @@ class RunnerContainerTest(DbTestCase):
             pack=RunnerContainerTest.failingaction_db.pack).ref
         parameters = params
         context = {'user': cfg.CONF.system_user.user}
-        liveaction_db = LiveActionDB(status=status, start_timestamp=start_timestamp,
+        return LiveActionDB(status=status, start_timestamp=start_timestamp,
                                      action=action_ref, parameters=parameters,
                                      context=context)
-        return liveaction_db
 
     def _get_output_schema_exec_db_model(self, params):
         status = action_constants.LIVEACTION_STATUS_REQUESTED
@@ -443,7 +441,6 @@ class RunnerContainerTest(DbTestCase):
             pack=RunnerContainerTest.schema_output_action_db.pack).ref
         parameters = params
         context = {'user': cfg.CONF.system_user.user}
-        liveaction_db = LiveActionDB(status=status, start_timestamp=start_timestamp,
+        return LiveActionDB(status=status, start_timestamp=start_timestamp,
                                      action=action_ref, parameters=parameters,
                                      context=context)
-        return liveaction_db

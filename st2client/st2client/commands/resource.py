@@ -150,13 +150,11 @@ class ResourceCommand(commands.Command):
         pk_argument_name = self.pk_argument_name
 
         if pk_argument_name == 'name_or_id':
-            instance = self.get_resource_by_name_or_id(name_or_id=name_or_id, **kwargs)
+            return self.get_resource_by_name_or_id(name_or_id=name_or_id, **kwargs)
         elif pk_argument_name == 'ref_or_id':
-            instance = self.get_resource_by_ref_or_id(ref_or_id=name_or_id, **kwargs)
+            return self.get_resource_by_ref_or_id(ref_or_id=name_or_id, **kwargs)
         else:
-            instance = self.get_resource_by_pk(pk=name_or_id, **kwargs)
-
-        return instance
+            return self.get_resource_by_pk(pk=name_or_id, **kwargs)
 
     def get_resource_by_pk(self, pk, **kwargs):
         """
@@ -188,8 +186,7 @@ class ResourceCommand(commands.Command):
         """
         Retrieve resource by name.
         """
-        instance = self.manager.get_by_name(name, **kwargs)
-        return instance
+        return self.manager.get_by_name(name, **kwargs)
 
     def get_resource_by_name_or_id(self, name_or_id, **kwargs):
         instance = self.get_resource_by_name(name=name_or_id, **kwargs)
@@ -227,13 +224,11 @@ class ResourceCommand(commands.Command):
         resource_display_name = resource.get_display_name().lower()
 
         if 'ref' in argument:
-            result = ('Reference or ID of the %s.' % (resource_display_name))
+            return ('Reference or ID of the %s.' % (resource_display_name))
         elif 'name_or_id' in argument:
-            result = ('Name or ID of the %s.' % (resource_display_name))
+            return ('Name or ID of the %s.' % (resource_display_name))
         else:
-            result = ('%s of the %s.' % (argument_display_name, resource_display_name))
-
-        return result
+            return ('%s of the %s.' % (argument_display_name, resource_display_name))
 
 
 class ResourceViewCommand(ResourceCommand):

@@ -256,10 +256,9 @@ class PythonActionWrapper(object):
         self._class_name = action_cls.__name__
 
         action_service = ActionService(action_wrapper=self)
-        action_instance = get_action_class_instance(action_cls=action_cls,
+        return get_action_class_instance(action_cls=action_cls,
                                                     config=self._config,
                                                     action_service=action_service)
-        return action_instance
 
 
 if __name__ == '__main__':

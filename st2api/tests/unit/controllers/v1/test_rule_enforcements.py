@@ -108,9 +108,8 @@ class RuleEnforcementControllerTestCase(FunctionalTest,
         self.assertEqual(len(resp.json), 1)
 
     def _insert_mock_models(self):
-        enfrocement_ids = [enforcement['id'] for enforcement in
+        return [enforcement['id'] for enforcement in
                            self.models['enforcements'].values()]
-        return enfrocement_ids
 
     def _delete_mock_models(self, object_ids):
         pass

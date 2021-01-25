@@ -121,8 +121,7 @@ class TriggerTypeController(resource.ContentPackResourceController):
         extra = {'old_triggertype_db': old_triggertype_db, 'new_triggertype_db': triggertype_db}
         LOG.audit('TriggerType updated. TriggerType.id=%s' % (triggertype_db.id), extra=extra)
 
-        triggertype_api = TriggerTypeAPI.from_model(triggertype_db)
-        return triggertype_api
+        return TriggerTypeAPI.from_model(triggertype_db)
 
     def delete(self, triggertype_ref_or_id):
         """
@@ -213,8 +212,7 @@ class TriggerController(object):
                 GET /triggers/1
         """
         trigger_db = TriggerController.__get_by_id(trigger_id)
-        trigger_api = TriggerAPI.from_model(trigger_db)
-        return trigger_api
+        return TriggerAPI.from_model(trigger_db)
 
     def get_all(self, requester_user=None):
         """
@@ -224,8 +222,7 @@ class TriggerController(object):
                 GET /triggers/
         """
         trigger_dbs = Trigger.get_all()
-        trigger_apis = [TriggerAPI.from_model(trigger_db) for trigger_db in trigger_dbs]
-        return trigger_apis
+        return [TriggerAPI.from_model(trigger_db) for trigger_db in trigger_dbs]
 
     def post(self, trigger):
         """
@@ -263,9 +260,7 @@ class TriggerController(object):
 
         extra = {'old_trigger_db': trigger, 'new_trigger_db': trigger_db}
         LOG.audit('Trigger updated. Trigger.id=%s' % (trigger.id), extra=extra)
-        trigger_api = TriggerAPI.from_model(trigger_db)
-
-        return trigger_api
+        return TriggerAPI.from_model(trigger_db)
 
     def delete(self, trigger_id):
         """
@@ -414,14 +409,15 @@ class TriggerInstanceController(TriggerInstanceControllerMixin, resource.Resourc
             # we should return back empty result
             return []
 
-        trigger_instances = self._get_trigger_instances(exclude_fields=exclude_attributes,
-                                                        include_fields=include_attributes,
-                                                        sort=sort,
-                                                        offset=offset,
-                                                        limit=limit,
-                                                        raw_filters=raw_filters,
-                                                        requester_user=requester_user)
-        return trigger_instances
+        return self._get_trigger_instances(
+            exclude_fields=exclude_attributes,
+            include_fields=include_attributes,
+            sort=sort,
+            offset=offset,
+            limit=limit,
+            raw_filters=raw_filters,
+            requester_user=requester_user,
+        )
 
     def _get_trigger_instances(self, exclude_fields=None, include_fields=None, sort=None, offset=0,
                                limit=None, raw_filters=None, requester_user=None):

@@ -172,7 +172,7 @@ class OrquestaWithItemsTest(st2tests.ExecutionDbTestCase):
 
         self.assertEqual(len(t1_ac_ex_dbs), num_items)
 
-        for i in range(0, num_items):
+        for i in range(num_items):
             if not i % 2:
                 expected_status = action_constants.LIVEACTION_STATUS_SUCCEEDED
             else:

@@ -98,8 +98,8 @@ class OrquestaRunner(runners.AsyncActionRunner):
             if wf_ex_db.status in wf_statuses.ABENDED_STATUSES:
                 result['errors'] = wf_ex_db.errors
 
+            msg = 'Workflow execution completed with errors.'
             for wf_ex_error in wf_ex_db.errors:
-                msg = 'Workflow execution completed with errors.'
                 wf_svc.update_progress(wf_ex_db, '%s %s' % (msg, str(wf_ex_error)), log=False)
                 LOG.error('[%s] %s', str(self.execution.id), msg, extra=wf_ex_error)
 
@@ -159,12 +159,10 @@ class OrquestaRunner(runners.AsyncActionRunner):
 
     @staticmethod
     def task_pauseable(ac_ex):
-        wf_ex_pauseable = (
+        return (
             ac_ex.runner['name'] in ac_const.WORKFLOW_RUNNER_TYPES and
             ac_ex.status == ac_const.LIVEACTION_STATUS_RUNNING
         )
-
-        return wf_ex_pauseable
 
     def pause(self):
         # Pause the target workflow.
@@ -192,12 +190,10 @@ class OrquestaRunner(runners.AsyncActionRunner):
 
     @staticmethod
     def task_resumeable(ac_ex):
-        wf_ex_resumeable = (
+        return (
             ac_ex.runner['name'] in ac_const.WORKFLOW_RUNNER_TYPES and
             ac_ex.status == ac_const.LIVEACTION_STATUS_PAUSED
         )
-
-        return wf_ex_resumeable
 
     def resume(self):
         # Resume the target workflow.
@@ -274,11 +270,7 @@ class OrquestaRunner(runners.AsyncActionRunner):
             else ac_const.LIVEACTION_STATUS_CANCELED
         )
 
-        return (
-            status,
-            result if result else self.liveaction.result,
-            self.liveaction.context
-        )
+        return status, result or self.liveaction.result, self.liveaction.context
 
 
 def get_runner():
