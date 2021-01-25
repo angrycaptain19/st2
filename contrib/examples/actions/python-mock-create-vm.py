@@ -9,7 +9,7 @@ class MockCreateVMAction(Action):
     def run(self, cpu_cores, memory_mb, vm_name, ip):
         eventlet.sleep(5)
 
-        data = {
+        return {
             'vm_id': 'vm' + str(random.randint(0, 10000)),
             ip: {
                 'cpu_cores': cpu_cores,
@@ -17,5 +17,3 @@ class MockCreateVMAction(Action):
                 'vm_name': vm_name
             }
         }
-
-        return data

@@ -57,8 +57,7 @@ class RuleTypesController(object):
                 GET /ruletypes/1
         """
         ruletype_db = RuleTypesController.__get_by_id(id)
-        ruletype_api = RuleTypeAPI.from_model(ruletype_db)
-        return ruletype_api
+        return RuleTypeAPI.from_model(ruletype_db)
 
     def get_all(self):
         """
@@ -68,9 +67,8 @@ class RuleTypesController(object):
                 GET /ruletypes/
         """
         ruletype_dbs = RuleType.get_all()
-        ruletype_apis = [RuleTypeAPI.from_model(runnertype_db)
+        return [RuleTypeAPI.from_model(runnertype_db)
                          for runnertype_db in ruletype_dbs]
-        return ruletype_apis
 
 
 rule_types_controller = RuleTypesController()

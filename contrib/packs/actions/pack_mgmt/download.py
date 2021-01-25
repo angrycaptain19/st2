@@ -41,8 +41,7 @@ class DownloadGitRepoAction(Action):
         self.proxy_config = None
 
         if self.http_proxy or self.https_proxy:
-            self.logger.debug('Using proxy %s',
-                              self.http_proxy if self.http_proxy else self.https_proxy)
+            self.logger.debug('Using proxy %s', self.http_proxy or self.https_proxy)
             self.proxy_config = {
                 'https_proxy': self.https_proxy,
                 'http_proxy': self.http_proxy,
@@ -98,9 +97,10 @@ class DownloadGitRepoAction(Action):
             sanitized_result[k] = v[1]
 
         if not atleast_one_success:
-            message_list = []
-            message_list.append('The pack has not been downloaded from "%s".\n' % (repo_url))
-            message_list.append('Errors:')
+            message_list = [
+                'The pack has not been downloaded from "%s".\n' % repo_url,
+                'Errors:',
+            ]
 
             for pack, value in result.items():
                 success, error = value

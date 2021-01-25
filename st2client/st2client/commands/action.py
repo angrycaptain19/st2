@@ -129,9 +129,8 @@ def format_wf_instances(instances):
     for instance in instances:
         if not getattr(instance, 'children', None):
             continue
-        else:
-            has_wf = True
-            break
+        has_wf = True
+        break
     if not has_wf:
         return instances
     # Prepend wf and non_wf prefixes.
@@ -373,10 +372,19 @@ class ActionRunCommandMixin(object):
         action_exec_mgr = self.app.client.managers['Execution']
 
         instance = execution
-        options = {'attributes': ['id', 'action.ref', 'parameters', 'status', 'start_timestamp',
-                                  'end_timestamp']}
-        options['json'] = args.json
-        options['attribute_transform_functions'] = self.attribute_transform_functions
+        options = {
+            'attributes': [
+                'id',
+                'action.ref',
+                'parameters',
+                'status',
+                'start_timestamp',
+                'end_timestamp',
+            ],
+            'json': args.json,
+            'attribute_transform_functions': self.attribute_transform_functions,
+        }
+
         formatter = execution_formatter.ExecutionResult
 
         kwargs['depth'] = args.depth
@@ -448,13 +456,6 @@ class ActionRunCommandMixin(object):
                               attribute_transform_functions=self.attribute_transform_functions)
 
     def _get_execution_result(self, execution, action_exec_mgr, args, **kwargs):
-        pending_statuses = [
-            LIVEACTION_STATUS_REQUESTED,
-            LIVEACTION_STATUS_SCHEDULED,
-            LIVEACTION_STATUS_RUNNING,
-            LIVEACTION_STATUS_CANCELING
-        ]
-
         if args.tail:
             # Start tailing new execution
             print('Tailing execution "%s"' % (str(execution.id)))
@@ -470,6 +471,13 @@ class ActionRunCommandMixin(object):
             return execution
 
         if not args.action_async:
+            pending_statuses = [
+                LIVEACTION_STATUS_REQUESTED,
+                LIVEACTION_STATUS_SCHEDULED,
+                LIVEACTION_STATUS_RUNNING,
+                LIVEACTION_STATUS_CANCELING
+            ]
+
             while execution.status in pending_statuses:
                 time.sleep(self.poll_interval)
                 if not args.json and not args.yaml:
@@ -514,7 +522,7 @@ class ActionRunCommandMixin(object):
             stderr = result.get('stderr', None)
             error = result.get('error', None)
             traceback = result.get('traceback', None)
-            error = error if error else stderr
+            error = error or stderr
         else:
             stderr = None
             error = None
@@ -603,7 +611,7 @@ class ActionRunCommandMixin(object):
 
             # When each values in this array represent dict type, this converts
             # the 'result' to the dict type value.
-            if all([isinstance(x, str) and ':' in x for x in result]) and auto_dict:
+            if all(isinstance(x, str) and ':' in x for x in result) and auto_dict:
                 result_dict = {}
                 for (k, v) in [x.split(':') for x in result]:
                     # To parse values using the 'transformer' according to the type which is
@@ -871,10 +879,11 @@ class ActionRunCommandMixin(object):
         # This really needs to be better handled on the back-end but that would be a bigger
         # change so handling in cli.
         context = getattr(task, 'context', None)
-        if context and 'chain' in context:
-            task_name_key = 'context.chain.name'
-        elif context and 'orquesta' in context:
-            task_name_key = 'context.orquesta.task_name'
+        if context:
+            if 'chain' in context:
+                task_name_key = 'context.chain.name'
+            elif 'orquesta' in context:
+                task_name_key = 'context.orquesta.task_name'
         # Use Execution as the object so that the formatter lookup does not change.
         # AKA HACK!
         return models.action.Execution(**{
@@ -893,12 +902,10 @@ class ActionRunCommandMixin(object):
         :type parameters: ``list``
         :type names: ``list`` or ``set``
         """
-        sorted_parameters = sorted(names, key=lambda name:
+        return sorted(names, key=lambda name:
                                    self._get_parameter_sort_value(
                                        parameters=parameters,
                                        name=name))
-
-        return sorted_parameters
 
     def _get_parameter_sort_value(self, parameters, name):
         """
@@ -913,8 +920,7 @@ class ActionRunCommandMixin(object):
         if not parameter:
             return None
 
-        sort_value = parameter.get('position', name)
-        return sort_value
+        return parameter.get('position', name)
 
     def _get_inherited_env_vars(self):
         env_vars = os.environ.copy()
@@ -1190,8 +1196,7 @@ class ActionExecutionGetCommand(ActionRunCommandMixin, ResourceViewCommand):
             include_attributes = ','.join(include_attributes)
             kwargs['params'] = {'include_attributes': include_attributes}
 
-        execution = self.get_resource_by_id(id=args.id, **kwargs)
-        return execution
+        return self.get_resource_by_id(id=args.id, **kwargs)
 
     @add_auth_token_to_kwargs_from_cli
     def run_and_print(self, args, **kwargs):
@@ -1303,12 +1308,15 @@ class ActionExecutionReRunCommand(ActionRunCommandMixin, resource.ResourceComman
         action_parameters = self._get_action_parameters_from_args(action=action, runner=runner,
                                                                   args=args)
 
-        execution = action_exec_mgr.re_run(execution_id=args.id,
-                                           parameters=action_parameters,
-                                           tasks=args.tasks,
-                                           no_reset=args.no_reset,
-                                           delay=args.delay if args.delay else 0,
-                                           **kwargs)
+        execution = action_exec_mgr.re_run(
+            execution_id=args.id,
+            parameters=action_parameters,
+            tasks=args.tasks,
+            no_reset=args.no_reset,
+            delay=args.delay or 0,
+            **kwargs
+        )
+
 
         execution = self._get_execution_result(execution=execution,
                                                action_exec_mgr=action_exec_mgr,
@@ -1519,13 +1527,17 @@ class ActionExecutionTailCommand(resource.ResourceCommand):
                 is_child_execution = bool(task_parent_execution_id)
 
                 # Ignore executions which are not part of the execution we are tailing
-                if is_child_execution and not is_tailing_execution_child_execution:
-                    if task_parent_execution_id not in workflow_execution_ids:
-                        continue
-                else:
-                    if task_execution_id not in workflow_execution_ids:
-                        continue
-
+                if (
+                    is_child_execution
+                    and not is_tailing_execution_child_execution
+                    and task_parent_execution_id not in workflow_execution_ids
+                    or (
+                        not is_child_execution
+                        or is_tailing_execution_child_execution
+                    )
+                    and task_execution_id not in workflow_execution_ids
+                ):
+                    continue
                 workflow_execution_ids.add(task_execution_id)
 
                 if is_child_execution:

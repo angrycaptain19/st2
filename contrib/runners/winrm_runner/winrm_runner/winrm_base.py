@@ -334,10 +334,7 @@ Add-Content -value $data -encoding byte -path $filePath
 
     def run_ps(self, script, params=None):
         # temporary directory for the powershell script
-        if params:
-            powershell = '& {%s} %s' % (script, params)
-        else:
-            powershell = script
+        powershell = '& {%s} %s' % (script, params) if params else script
         encoded_ps = self._winrm_encode(powershell)
         ps_cmd = self._winrm_ps_cmd(encoded_ps)
 
@@ -345,13 +342,13 @@ Add-Content -value $data -encoding byte -path $filePath
         # then run it as a single command (faster)
         # else we need to upload the script to a temporary file and execute it,
         # then remove the temporary file
-        if len(ps_cmd) <= WINRM_MAX_CMD_LENGTH:
-            LOG.info(("WinRM powershell command size {} is > {}, the max size of a"
-                      " powershell command. Converting to a script execution.")
-                     .format(WINRM_MAX_CMD_LENGTH, len(ps_cmd)))
-            return self._run_ps(encoded_ps, is_b64=True)
-        else:
+        if len(ps_cmd) > WINRM_MAX_CMD_LENGTH:
             return self._run_ps_script(script, params)
+
+        LOG.info(("WinRM powershell command size {} is > {}, the max size of a"
+                  " powershell command. Converting to a script execution.")
+                 .format(WINRM_MAX_CMD_LENGTH, len(ps_cmd)))
+        return self._run_ps(encoded_ps, is_b64=True)
 
     def _run_ps(self, powershell, is_b64=False):
         """Executes a powershell command, no checks for length are done in this version.
@@ -407,7 +404,7 @@ Add-Content -value $data -encoding byte -path $filePath
         substrs = sorted(replacements, key=len, reverse=True)
 
         # Create a big OR regex that matches any of the substrings to replace
-        regexp = re.compile('|'.join([re.escape(s) for s in substrs]))
+        regexp = re.compile('|'.join(re.escape(s) for s in substrs))
 
         # For each match, look up the new string in the replacements
         return regexp.sub(lambda match: replacements[match.group(0)], string)
@@ -422,12 +419,15 @@ Add-Content -value $data -encoding byte -path $filePath
             ps_str = "$true" if param else "$false"
         elif isinstance(param, list):
             ps_str = "@("
-            ps_str += ", ".join([self._param_to_ps(p) for p in param])
+            ps_str += ", ".join(self._param_to_ps(p) for p in param)
             ps_str += ")"
         elif isinstance(param, dict):
             ps_str = "@{"
-            ps_str += "; ".join([(self._param_to_ps(k) + ' = ' + self._param_to_ps(v))
-                                 for k, v in six.iteritems(param)])
+            ps_str += "; ".join(
+                self._param_to_ps(k) + ' = ' + self._param_to_ps(v)
+                for k, v in six.iteritems(param)
+            )
+
             ps_str += "}"
         else:
             ps_str = str(param)
@@ -451,7 +451,7 @@ Add-Content -value $data -encoding byte -path $filePath
         # concatenate them into a long string
         ps_params_str = ""
         if named_args:
-            ps_params_str += " " .join([(k + " " + v) for k, v in six.iteritems(named_args)])
+            ps_params_str += " " .join(k + " " + v for k, v in six.iteritems(named_args))
             ps_params_str += " "
         if positional_args:
             ps_params_str += " ".join(positional_args)

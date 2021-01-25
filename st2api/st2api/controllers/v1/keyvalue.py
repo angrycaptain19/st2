@@ -119,13 +119,11 @@ class KeyValuePairController(ResourceController):
             raise ValueError('Invalid scope: %s' % (scope))
 
         from_model_kwargs = {'mask_secrets': not decrypt}
-        kvp_api = self._get_one_by_scope_and_name(
+        return self._get_one_by_scope_and_name(
             name=key_ref,
             scope=scope,
             from_model_kwargs=from_model_kwargs
         )
-
-        return kvp_api
 
     def get_all(self, requester_user, prefix=None, scope=FULL_SYSTEM_SCOPE, user=None,
                 decrypt=False, sort=None, offset=0, limit=None, **raw_filters):
@@ -223,8 +221,7 @@ class KeyValuePairController(ResourceController):
                 requester_user=requester_user)
 
             # Combine the result
-            kvp_apis = []
-            kvp_apis.extend(kvp_apis_system.json or [])
+            kvp_apis = list(kvp_apis_system.json or [])
             kvp_apis.extend(kvp_apis_user.json or [])
         elif scope in [USER_SCOPE, FULL_USER_SCOPE]:
             # Make sure we only returned values scoped to current user
@@ -328,8 +325,7 @@ class KeyValuePairController(ResourceController):
         extra = {'kvp_db': kvp_db}
         LOG.audit('KeyValuePair updated. KeyValuePair.id=%s' % (kvp_db.id), extra=extra)
 
-        kvp_api = KeyValuePairAPI.from_model(kvp_db)
-        return kvp_api
+        return KeyValuePairAPI.from_model(kvp_db)
 
     def delete(self, name, requester_user, scope=FULL_SYSTEM_SCOPE, user=None):
         """
@@ -392,8 +388,7 @@ class KeyValuePairController(ResourceController):
         :param name: Datastore item name (PK).
         :type name: ``str``
         """
-        lock_name = six.b('kvp-crud-%s.%s' % (scope, name))
-        return lock_name
+        return six.b('kvp-crud-%s.%s' % (scope, name))
 
     def _validate_all_scope(self, scope, requester_user):
         """
@@ -415,7 +410,7 @@ class KeyValuePairController(ResourceController):
         """
         rbac_utils = get_rbac_backend().get_utils_class()
         is_admin = rbac_utils.user_is_admin(user_db=requester_user)
-        is_user_scope = (scope == USER_SCOPE or scope == FULL_USER_SCOPE)
+        is_user_scope = scope in [USER_SCOPE, FULL_USER_SCOPE]
 
         if decrypt and (not is_user_scope and not is_admin):
             msg = 'Decrypt option requires administrator access'

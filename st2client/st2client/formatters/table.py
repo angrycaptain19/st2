@@ -80,7 +80,7 @@ class MultiColumnTable(formatters.Formatter):
                 first_col_width = col_width
             widths = []
             subtract = 0
-            for index in range(0, len(attributes)):
+            for index in range(len(attributes)):
                 attribute_name = attributes[index]
 
                 if index == 0:
@@ -97,9 +97,8 @@ class MultiColumnTable(formatters.Formatter):
                     if index == (len(attributes) - 1) and subtract:
                         current_col_width = (col_width - subtract)
 
-                        if current_col_width <= MIN_COL_WIDTH:
                             # Make sure column width is always grater than MIN_COL_WIDTH
-                            current_col_width = MIN_COL_WIDTH
+                        current_col_width = max(current_col_width, MIN_COL_WIDTH)
                     else:
                         current_col_width = col_width
 
@@ -123,8 +122,7 @@ class MultiColumnTable(formatters.Formatter):
             # If only 1 width value is provided then
             # apply it to all columns else fix at 28.
             width = widths[0] if len(widths) == 1 else 28
-            columns = zip(attributes,
-                          [width for i in range(0, len(attributes))])
+            columns = zip(attributes, [width for i in range(len(attributes))])
 
         # Format result to table.
         table = PrettyTable()
@@ -145,15 +143,13 @@ class MultiColumnTable(formatters.Formatter):
                         value = cls._get_field_value(value, name)
                         if type(value) is str:
                             break
-                    value = strutil.strip_carriage_returns(strutil.unescape(value))
-                    values.append(value)
                 else:
                     value = cls._get_simple_field_value(entry, field_name)
                     transform_function = attribute_transform_functions.get(field_name,
                                                                            lambda value: value)
                     value = transform_function(value=value)
-                    value = strutil.strip_carriage_returns(strutil.unescape(value))
-                    values.append(value)
+                value = strutil.strip_carriage_returns(strutil.unescape(value))
+                values.append(value)
             table.add_row(values)
 
         # width for the note
@@ -194,7 +190,7 @@ class MultiColumnTable(formatters.Formatter):
         if r_val is None:
             return ''
 
-        if isinstance(r_val, list) or isinstance(r_val, dict):
+        if isinstance(r_val, (list, dict)):
             return r_val if len(r_val) > 0 else ''
         return r_val
 
@@ -203,8 +199,7 @@ class MultiColumnTable(formatters.Formatter):
         if not name:
             return None
 
-        friendly_name = name.replace('_', ' ').replace('.', ' ').capitalize()
-        return friendly_name
+        return name.replace('_', ' ').replace('.', ' ').capitalize()
 
     @staticmethod
     def _get_required_column_width(values, minimum_width=0):
@@ -267,7 +262,7 @@ class PropertyValueTable(formatters.Formatter):
             r_val = getattr(subject, attribute, None)
         if r_val is None:
             return ''
-        if isinstance(r_val, list) or isinstance(r_val, dict):
+        if isinstance(r_val, (list, dict)):
             return r_val if len(r_val) > 0 else ''
         return r_val
 
@@ -279,11 +274,7 @@ class SingleRowTable(object):
             return None
         elif limit == 1:
 
-            if entity == "inquiries":
-                entity = "inquiry"
-            else:
-                entity = entity[:-1]
-
+            entity = "inquiry" if entity == "inquiries" else entity[:-1]
             message = "Note: Only one %s is displayed. Use -n/--last flag for more results." \
                 % entity
         else:

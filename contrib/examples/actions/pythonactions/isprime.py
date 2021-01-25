@@ -12,12 +12,12 @@ class PrimeCheckerAction(Action):
             raise ValueError('%s should be an integer.' % value)
         if value < 2:
             return False
-        for test in range(2, int(math.floor(math.sqrt(value)))+1):
-            if value % test == 0:
-                return False
-        return True
+        return all(
+            value % test != 0
+            for test in range(2, int(math.floor(math.sqrt(value))) + 1)
+        )
 
 if __name__ == '__main__':
     checker = PrimeCheckerAction()
-    for i in range(0, 10):
+    for i in range(10):
         print('%s : %s' % (i, checker.run(value=1)))

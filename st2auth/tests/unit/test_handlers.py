@@ -52,27 +52,27 @@ class AuthHandlerTestCase(CleanDbTestCase):
 
     def test_standalone_bad_auth_type(self):
         h = handlers.StandaloneAuthHandler()
-        request = {}
-
         with self.assertRaises(exc.HTTPUnauthorized):
+            request = {}
+
             h.handle_auth(
                 request, headers={}, remote_addr=None,
                 remote_user=None, authorization=('complex', DUMMY_CREDS))
 
     def test_standalone_no_auth(self):
         h = handlers.StandaloneAuthHandler()
-        request = {}
-
         with self.assertRaises(exc.HTTPUnauthorized):
+            request = {}
+
             h.handle_auth(
                 request, headers={}, remote_addr=None,
                 remote_user=None, authorization=None)
 
     def test_standalone_bad_auth_value(self):
         h = handlers.StandaloneAuthHandler()
-        request = {}
-
         with self.assertRaises(exc.HTTPUnauthorized):
+            request = {}
+
             h.handle_auth(
                 request, headers={}, remote_addr=None,
                 remote_user=None, authorization=('basic', 'gobblegobble'))

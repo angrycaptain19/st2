@@ -231,9 +231,7 @@ class InquiriesController(ResourceController):
 
         from_model_kwargs = from_model_kwargs or {}
         from_model_kwargs.update(self.from_model_kwargs)
-        result = self.model.from_model(execution_db, **from_model_kwargs)
-
-        return result
+        return self.model.from_model(execution_db, **from_model_kwargs)
 
 
 def get_uid():

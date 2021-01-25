@@ -38,7 +38,7 @@ class Branch(object):
         self.parser = subparsers.add_parser(self.name,
                                             description=self.description,
                                             help=self.description)
-        self.commands = dict()
+        self.commands = {}
 
 
 @six.add_metaclass(abc.ABCMeta)

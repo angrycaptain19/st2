@@ -150,8 +150,7 @@ class TracesControllerTestCase(FunctionalTest,
                          'Correct trace not returned.')
 
     def _insert_mock_models(self):
-        trace_ids = [trace['id'] for trace in self.models['traces'].values()]
-        return trace_ids
+        return [trace['id'] for trace in self.models['traces'].values()]
 
     def _delete_mock_models(self, object_ids):
         pass

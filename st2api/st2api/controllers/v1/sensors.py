@@ -105,9 +105,7 @@ class SensorTypeController(resource.ContentPackResourceController):
             'new_sensor_type_db': sensor_type_db
         }
         LOG.audit('Sensor updated. Sensor.id=%s.' % (sensor_type_db.id), extra=extra)
-        sensor_type_api = SensorTypeAPI.from_model(sensor_type_db)
-
-        return sensor_type_api
+        return SensorTypeAPI.from_model(sensor_type_db)
 
 
 sensor_type_controller = SensorTypeController()

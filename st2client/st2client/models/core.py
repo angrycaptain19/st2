@@ -93,11 +93,11 @@ class Resource(object):
 
     @classmethod
     def get_alias(cls):
-        return cls._alias if cls._alias else cls.__name__
+        return cls._alias or cls.__name__
 
     @classmethod
     def get_display_name(cls):
-        return cls._display_name if cls._display_name else cls.__name__
+        return cls._display_name or cls.__name__
 
     @classmethod
     def get_plural_name(cls):
@@ -108,9 +108,7 @@ class Resource(object):
 
     @classmethod
     def get_plural_display_name(cls):
-        return (cls._plural_display_name
-                if cls._plural_display_name
-                else cls._plural)
+        return cls._plural_display_name or cls._plural
 
     @classmethod
     def get_url_path_name(cls):
@@ -120,9 +118,8 @@ class Resource(object):
         return cls.get_plural_name().lower()
 
     def serialize(self):
-        return dict((k, v)
-                    for k, v in six.iteritems(self.__dict__)
-                    if not k.startswith('_'))
+        return {k: v for k, v in six.iteritems(self.__dict__)
+                        if not k.startswith('_')}
 
     @classmethod
     def deserialize(cls, doc):
@@ -144,8 +141,7 @@ class Resource(object):
 
         attributes = ','.join(attributes)
         class_name = self.__class__.__name__
-        result = '<%s %s>' % (class_name, attributes)
-        return result
+        return '<%s %s>' % (class_name, attributes)
 
 
 class ResourceManager(object):
@@ -294,11 +290,10 @@ class ResourceManager(object):
         instances = self.query(name=name, **kwargs)
         if not instances:
             return None
-        else:
-            if len(instances) > 1:
-                raise Exception('More than one %s named "%s" are found.' %
-                                (self.resource.__name__.lower(), name))
-            return instances[0]
+        if len(instances) > 1:
+            raise Exception('More than one %s named "%s" are found.' %
+                            (self.resource.__name__.lower(), name))
+        return instances[0]
 
     @add_auth_token_to_kwargs_from_env
     def create(self, instance, **kwargs):
@@ -411,8 +406,7 @@ class ExecutionResourceManager(ResourceManager):
         if response.status_code != http_client.OK:
             self.handle_error(response)
 
-        instance = self.resource.deserialize(response.json())
-        return instance
+        return self.resource.deserialize(response.json())
 
     @add_auth_token_to_kwargs_from_env
     def get_output(self, execution_id, output_type=None, **kwargs):
@@ -517,8 +511,7 @@ class PackResourceManager(ResourceManager):
         response = self.client.post(url, payload, **kwargs)
         if response.status_code != http_client.OK:
             self.handle_error(response)
-        instance = AsyncRequest.deserialize(response.json())
-        return instance
+        return AsyncRequest.deserialize(response.json())
 
     @add_auth_token_to_kwargs_from_env
     def remove(self, packs, **kwargs):
@@ -526,8 +519,7 @@ class PackResourceManager(ResourceManager):
         response = self.client.post(url, {'packs': packs}, **kwargs)
         if response.status_code != http_client.OK:
             self.handle_error(response)
-        instance = AsyncRequest.deserialize(response.json())
-        return instance
+        return AsyncRequest.deserialize(response.json())
 
     @add_auth_token_to_kwargs_from_env
     def search(self, args, ignore_errors=False, **kwargs):
@@ -561,8 +553,7 @@ class PackResourceManager(ResourceManager):
         response = self.client.post(url, payload, **kwargs)
         if response.status_code != http_client.OK:
             self.handle_error(response)
-        instance = self.resource.deserialize(response.json())
-        return instance
+        return self.resource.deserialize(response.json())
 
 
 class ConfigManager(ResourceManager):

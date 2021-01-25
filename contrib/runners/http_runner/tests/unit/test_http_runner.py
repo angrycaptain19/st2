@@ -34,12 +34,7 @@ __all__ = [
 ]
 
 
-if six.PY2:
-    EXPECTED_DATA = ''
-else:
-    EXPECTED_DATA = b''
-
-
+EXPECTED_DATA = '' if six.PY2 else b''
 class MockResult(object):
     close = mock.Mock()
 
@@ -120,11 +115,7 @@ class HTTPClientTestCase(unittest2.TestCase):
 
         self.assertTrue(client.verify)
 
-        if six.PY2:
-            data = ''
-        else:
-            data = b''
-
+        data = '' if six.PY2 else b''
         mock_requests.request.assert_called_with(
             'GET', url, allow_redirects=False, auth=None, cookies=None,
             data=data, files=None, headers={}, params=None, proxies=None,
@@ -215,13 +206,9 @@ class HTTPClientTestCase(unittest2.TestCase):
 
         call_kwargs = mock_requests.request.call_args_list[1][1]
 
-        if six.PY2:
-            expected_data = {
+        expected_data = {
                 'foo': u'a\u017e\u017e'
-            }
-        else:
-            expected_data = body
-
+            } if six.PY2 else body
         self.assertEqual(call_kwargs['data'], expected_data)
 
     @mock.patch('http_runner.http_runner.requests')

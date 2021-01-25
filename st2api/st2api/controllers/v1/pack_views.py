@@ -192,10 +192,10 @@ class FileController(BaseFileController):
 
         pack_ref = pack_db.ref
 
-        # Note: Until list filtering is in place we don't require RBAC check for icon file
-        permission_type = PermissionType.PACK_VIEW
         if file_path not in WHITELISTED_FILE_PATHS:
             rbac_utils = get_rbac_backend().get_utils_class()
+            # Note: Until list filtering is in place we don't require RBAC check for icon file
+            permission_type = PermissionType.PACK_VIEW
             rbac_utils.assert_user_has_resource_db_permission(user_db=requester_user,
                                                               resource_db=pack_db,
                                                               permission_type=permission_type)

@@ -26,11 +26,7 @@ __all__ = [
 
 class PauseAction(Action):
     def run(self, max_pause, random):
-        if random:
-            delay = randint(1, int(max_pause))
-        else:
-            delay = max_pause
-
+        delay = randint(1, int(max_pause)) if random else max_pause
         time.sleep(delay)
 
         return delay

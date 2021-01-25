@@ -117,7 +117,7 @@ class RuleController(BaseRestControllerMixin, BaseResourceIsolationControllerMix
                                                                         user=user)
 
         if not hasattr(rule, 'context'):
-            rule.context = dict()
+            rule.context = {}
 
         rule.context['user'] = user
 
@@ -175,7 +175,7 @@ class RuleController(BaseRestControllerMixin, BaseResourceIsolationControllerMix
                                                                         user=user)
 
         if not hasattr(rule, 'context'):
-            rule.context = dict()
+            rule.context = {}
         rule.context['user'] = user
 
         try:
@@ -211,9 +211,7 @@ class RuleController(BaseRestControllerMixin, BaseResourceIsolationControllerMix
 
         extra = {'old_rule_db': old_rule_db, 'new_rule_db': rule_db}
         LOG.audit('Rule updated. Rule.id=%s.' % (rule_db.id), extra=extra)
-        rule_api = RuleAPI.from_model(rule_db)
-
-        return rule_api
+        return RuleAPI.from_model(rule_db)
 
     def delete(self, rule_ref_or_id, requester_user):
         """

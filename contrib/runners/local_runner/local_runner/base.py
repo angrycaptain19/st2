@@ -99,11 +99,7 @@ class BaseLocalShellRunner(ActionRunner, ShellRunnerMixin):
     def _run(self, action):
         env_vars = self._env
 
-        if not self.entry_point:
-            script_action = False
-        else:
-            script_action = True
-
+        script_action = bool(self.entry_point)
         args = action.get_full_command_string()
         sanitized_args = action.get_sanitized_full_command_string()
 
@@ -183,18 +179,15 @@ class BaseLocalShellRunner(ActionRunner, ShellRunnerMixin):
             exit_code = -1 * exit_code_constants.SIGKILL_EXIT_CODE
 
         # Detect if user provided an invalid sudo password or sudo is not configured for that user
-        if self._sudo_password:
-            if re.search(r'sudo: \d+ incorrect password attempts', stderr):
-                match = re.search(r'\[sudo\] password for (.+?)\:', stderr)
+        if self._sudo_password and re.search(
+            r'sudo: \d+ incorrect password attempts', stderr
+        ):
+            match = re.search(r'\[sudo\] password for (.+?)\:', stderr)
 
-                if match:
-                    username = match.groups()[0]
-                else:
-                    username = 'unknown'
-
-                error = ('Invalid sudo password provided or sudo is not configured for this user '
-                        '(%s)' % (username))
-                exit_code = -1
+            username = match.groups()[0] if match else 'unknown'
+            error = ('Invalid sudo password provided or sudo is not configured for this user '
+                    '(%s)' % (username))
+            exit_code = -1
 
         succeeded = (exit_code == exit_code_constants.SUCCESS_EXIT_CODE)
 

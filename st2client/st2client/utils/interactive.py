@@ -247,7 +247,7 @@ class EnumReader(StringReader):
         if num_options > 3:
             num_options = 3
             more = '...'
-        options = [str(i) for i in range(0, num_options)]
+        options = [str(i) for i in range(num_options)]
         self.template += u'\nChoose from {}{}'.format(', '.join(options), more)
 
         if 'default' in self.spec:
@@ -268,10 +268,8 @@ class ObjectReader(StringReader):
     def read(self):
         prefix = u'{}.'.format(self.name)
 
-        result = InteractiveForm(self.spec.get('properties', {}),
+        return InteractiveForm(self.spec.get('properties', {}),
                                  prefix=prefix, reraise=True).initiate_dialog()
-
-        return result
 
 
 class ArrayReader(StringReader):
@@ -298,9 +296,7 @@ class ArrayReader(StringReader):
             message = 'Interactive mode does not support arrays of %s type yet' % item_type
             raise ReaderNotImplemented(message)
 
-        result = super(ArrayReader, self).read()
-
-        return result
+        return super(ArrayReader, self).read()
 
     def _construct_template(self):
         self.template = u'{0} (comma-separated list)'
@@ -373,7 +369,7 @@ class ArrayEnumReader(EnumReader):
         if num_options > 3:
             num_options = 3
             more = '...'
-        options = [str(i) for i in range(0, num_options)]
+        options = [str(i) for i in range(num_options)]
         self.template += u'\nChoose from {}{}'.format(', '.join(options), more)
 
         if 'default' in self.spec:
@@ -383,13 +379,11 @@ class ArrayEnumReader(EnumReader):
             self.template += u': '
 
     def _transform_response(self, response):
-        result = []
-
-        for i in (item.strip() for item in response.split(',')):
-            if i:
-                result.append(self.items.get('enum')[int(i)])
-
-        return result
+        return [
+            self.items.get('enum')[int(i)]
+            for i in (item.strip() for item in response.split(','))
+            if i
+        ]
 
 
 class InteractiveForm(object):

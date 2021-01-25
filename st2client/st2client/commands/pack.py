@@ -280,11 +280,12 @@ class PackInstallCommand(PackAsyncCommand):
                               attribute_display_order=self.attribute_display_order)
         else:
             all_pack_instances = self.app.client.managers['Pack'].get_all(**kwargs)
-            pack_instances = []
+            pack_instances = [
+                pack
+                for pack in all_pack_instances
+                if pack.name in packs or pack.ref in packs
+            ]
 
-            for pack in all_pack_instances:
-                if pack.name in packs or pack.ref in packs:
-                    pack_instances.append(pack)
 
             self.print_output(pack_instances, table.MultiColumnTable,
                               attributes=args.attr, widths=args.width,
@@ -427,9 +428,7 @@ class PackConfigCommand(resource.ResourceCommand):
             raise OperationFailureException('Interrupted')
 
         config_item = Config(pack=args.name, values=config)
-        result = self.app.client.managers['Config'].update(config_item, **kwargs)
-
-        return result
+        return self.app.client.managers['Config'].update(config_item, **kwargs)
 
     def run_and_print(self, args, **kwargs):
         try:

@@ -119,11 +119,7 @@ class PolicyTypeControllerTestCase(FunctionalTest,
         self.assertEqual(resp.status_int, 404)
 
     def _insert_mock_models(self):
-        result = []
-        for policy_type_db in self.policy_type_dbs:
-            result.append(policy_type_db.id)
-
-        return result
+        return [policy_type_db.id for policy_type_db in self.policy_type_dbs]
 
     def _delete_mock_models(self, object_ids):
         pass
@@ -283,11 +279,7 @@ class PolicyControllerTestCase(FunctionalTest,
         Policy.delete(Policy.get_by_id(self.__get_obj_id(post_resp)))
 
     def _insert_mock_models(self):
-        result = []
-        for policy_db in self.policy_dbs:
-            result.append(policy_db.id)
-
-        return result
+        return [policy_db.id for policy_db in self.policy_dbs]
 
     def _delete_mock_models(self, object_ids):
         pass

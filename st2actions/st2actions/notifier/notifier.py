@@ -135,8 +135,6 @@ class Notifier(consumers.MessageHandler):
         routes = (getattr(notify_subsection, 'routes') or
                   getattr(notify_subsection, 'channels', [])) or []
 
-        execution_id = str(execution_db.id)
-
         if routes and len(routes) >= 1:
             payload = {}
             message = notify_subsection.message or (
@@ -170,6 +168,8 @@ class Notifier(consumers.MessageHandler):
 
             payload['message'] = message
             payload['data'] = data
+            execution_id = str(execution_db.id)
+
             payload['execution_id'] = execution_id
             payload['status'] = liveaction_db.status
             payload['start_timestamp'] = isotime.format(liveaction_db.start_timestamp)
@@ -202,7 +202,7 @@ class Notifier(consumers.MessageHandler):
                 except:
                     failed_routes.append(route)
 
-            if len(failed_routes) > 0:
+            if failed_routes:
                 raise Exception('Failed notifications to routes: %s' % ', '.join(failed_routes))
 
     def _build_jinja_context(self, liveaction_db, execution_db):

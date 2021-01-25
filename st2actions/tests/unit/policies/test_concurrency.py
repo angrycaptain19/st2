@@ -128,7 +128,7 @@ class ConcurrencyPolicyTestCase(EventletTestCase, ExecutionDbTestCase):
         self.assertGreater(policy_db.parameters['threshold'], 0)
 
         # Launch action executions until the expected threshold is reached.
-        for i in range(0, policy_db.parameters['threshold']):
+        for i in range(policy_db.parameters['threshold']):
             parameters = {'actionstr': 'foo-' + str(i)}
             liveaction = LiveActionDB(action='wolfpack.action-1', parameters=parameters)
             action_service.request(liveaction)
@@ -206,7 +206,7 @@ class ConcurrencyPolicyTestCase(EventletTestCase, ExecutionDbTestCase):
         self.assertGreater(policy_db.parameters['threshold'], 0)
 
         # Launch action executions until the expected threshold is reached.
-        for i in range(0, policy_db.parameters['threshold']):
+        for i in range(policy_db.parameters['threshold']):
             parameters = {'actionstr': 'foo-' + str(i)}
             liveaction = LiveActionDB(action='wolfpack.action-2', parameters=parameters)
             action_service.request(liveaction)
@@ -260,7 +260,7 @@ class ConcurrencyPolicyTestCase(EventletTestCase, ExecutionDbTestCase):
         self.assertGreater(policy_db.parameters['threshold'], 0)
 
         # Launch action executions until the expected threshold is reached.
-        for i in range(0, policy_db.parameters['threshold']):
+        for i in range(policy_db.parameters['threshold']):
             parameters = {'actionstr': 'foo-' + str(i)}
             liveaction = LiveActionDB(action='wolfpack.action-1', parameters=parameters)
             action_service.request(liveaction)

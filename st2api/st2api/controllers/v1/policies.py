@@ -69,24 +69,23 @@ class PolicyTypeController(resource.ResourceController):
                                                           resource_db=instance,
                                                           permission_type=permission_type)
 
-        result = self.model.from_model(instance)
-        return result
+        return self.model.from_model(instance)
 
     def _get_all(self, exclude_fields=None, include_fields=None, sort=None, offset=0, limit=None,
                  query_options=None, from_model_kwargs=None, raw_filters=None,
                  requester_user=None):
 
-        resp = super(PolicyTypeController, self)._get_all(exclude_fields=exclude_fields,
-                                                          include_fields=include_fields,
-                                                          sort=sort,
-                                                          offset=offset,
-                                                          limit=limit,
-                                                          query_options=query_options,
-                                                          from_model_kwargs=from_model_kwargs,
-                                                          raw_filters=raw_filters,
-                                                          requester_user=requester_user)
-
-        return resp
+        return super(PolicyTypeController, self)._get_all(
+            exclude_fields=exclude_fields,
+            include_fields=include_fields,
+            sort=sort,
+            offset=offset,
+            limit=limit,
+            query_options=query_options,
+            from_model_kwargs=from_model_kwargs,
+            raw_filters=raw_filters,
+            requester_user=requester_user,
+        )
 
     def _get_by_ref_or_id(self, ref_or_id):
         if PolicyTypeReference.is_reference(ref_or_id):
@@ -114,8 +113,9 @@ class PolicyTypeController(resource.ResourceController):
         except Exception:
             return None
 
-        resource_db = self.access.query(name=ref.name, resource_type=ref.resource_type).first()
-        return resource_db
+        return self.access.query(
+            name=ref.name, resource_type=ref.resource_type
+        ).first()
 
 
 class PolicyController(resource.ContentPackResourceController):

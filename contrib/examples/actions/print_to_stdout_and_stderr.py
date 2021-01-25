@@ -21,7 +21,7 @@ from st2common.runners.base_action import Action
 
 class PrintToStdoutAndStderrAction(Action):
     def run(self, count=100, sleep_delay=0.5):
-        for i in range(0, count):
+        for i in range(count):
             if i % 2 == 0:
                 text = 'stderr'
                 stream = sys.stderr

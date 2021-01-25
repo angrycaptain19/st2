@@ -39,8 +39,7 @@ def format_dt(dt):
     """
     Format datetime object for human friendly representation.
     """
-    value = dt.strftime('%a, %d %b %Y %H:%M:%S %Z')
-    return value
+    return dt.strftime('%a, %d %b %Y %H:%M:%S %Z')
 
 
 def format_isodate(value, timezone=None):
@@ -71,5 +70,4 @@ def format_isodate_for_user_timezone(value):
     """
     config = get_config()
     timezone = config.get('cli', {}).get('timezone', 'UTC')
-    result = format_isodate(value=value, timezone=timezone)
-    return result
+    return format_isodate(value=value, timezone=timezone)

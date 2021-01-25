@@ -277,9 +277,7 @@ class BasePacksController(ResourceController):
             abort(http_client.NOT_FOUND, msg)
             return
 
-        result = self.model.from_model(instance, **self.from_model_kwargs)
-
-        return result
+        return self.model.from_model(instance, **self.from_model_kwargs)
 
     def _get_by_ref_or_id(self, ref_or_id, exclude_fields=None):
         resource_db = self._get_by_id(resource_id=ref_or_id, exclude_fields=exclude_fields)
@@ -298,8 +296,7 @@ class BasePacksController(ResourceController):
         """
         Note: In this case "ref" is pack name and not StackStorm's ResourceReference.
         """
-        resource_db = self.access.query(ref=ref, exclude_fields=exclude_fields).first()
-        return resource_db
+        return self.access.query(ref=ref, exclude_fields=exclude_fields).first()
 
 
 class PacksIndexController():

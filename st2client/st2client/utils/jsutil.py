@@ -73,8 +73,7 @@ def _get_value_complex(doc, key):
     """
     jsonpath_expr = parse(key)
     matches = jsonpath_expr.find(doc)
-    value = None if len(matches) < 1 else matches[0].value
-    return value
+    return None if len(matches) < 1 else matches[0].value
 
 
 def get_value(doc, key):

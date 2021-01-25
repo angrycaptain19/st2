@@ -192,9 +192,8 @@ class ActionAliasControllerTestCase(FunctionalTest,
         self.assertEqual(len(resp.json.get('helpstrings')), 1)
 
     def _insert_mock_models(self):
-        alias_ids = [self.alias1['id'], self.alias2['id'], self.alias3['id'],
+        return [self.alias1['id'], self.alias2['id'], self.alias3['id'],
                      self.alias3_generic['id']]
-        return alias_ids
 
     def _delete_mock_models(self, object_ids):
         return None

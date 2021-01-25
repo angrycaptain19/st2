@@ -51,13 +51,11 @@ class TimersHolder(object):
         del self._timers[ref]
 
     def get_all(self, timer_type=None):
-        timer_triggers = []
-
-        for _, timer in iteritems(self._timers):
-            if not timer_type or timer['type'] == timer_type:
-                timer_triggers.append(timer)
-
-        return timer_triggers
+        return [
+            timer
+            for _, timer in iteritems(self._timers)
+            if not timer_type or timer['type'] == timer_type
+        ]
 
 
 class TimersController(resource.ContentPackResourceController):
@@ -112,8 +110,7 @@ class TimersController(resource.ContentPackResourceController):
                                                           resource_db=resource_db,
                                                           permission_type=permission_type)
 
-        result = self.model.from_model(trigger_db)
-        return result
+        return self.model.from_model(trigger_db)
 
     def add_trigger(self, trigger):
         # Note: Permission checking for creating and deleting a timer is done during rule
@@ -159,8 +156,7 @@ class TimersController(resource.ContentPackResourceController):
         self.remove_trigger(trigger=trigger)
 
     def _sanitize_trigger(self, trigger):
-        sanitized = TriggerAPI.from_model(trigger).to_dict()
-        return sanitized
+        return TriggerAPI.from_model(trigger).to_dict()
 
 
 timers_controller = TimersController()

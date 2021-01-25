@@ -118,7 +118,6 @@ class ActionExecutionSchedulingQueueItemDBTest(ExecutionDbTestCase):
     def test_next_execution(self):
         self.reset()
 
-        schedule_q_dbs = []
         delays = [2000, 5000, 4000]
         expected_order = [0, 2, 1]
         test_cases = []
@@ -135,16 +134,12 @@ class ActionExecutionSchedulingQueueItemDBTest(ExecutionDbTestCase):
 
             test_cases.append(test_case)
 
-        for test_case in test_cases:
-            schedule_q_dbs.append(
-                ActionExecutionSchedulingQueue.add_or_update(
+        schedule_q_dbs = [ActionExecutionSchedulingQueue.add_or_update(
                     self.scheduler._create_execution_queue_item_db_from_liveaction(
                         test_case['liveaction'],
                         test_case['delay'],
                     )
-                )
-            )
-
+                ) for test_case in test_cases]
         # Wait maximum delay seconds so the query works as expected
         eventlet.sleep(3.2)
 

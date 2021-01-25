@@ -165,24 +165,21 @@ class ChainHolder(object):
         """
         Return names for all the nodes in the chain.
         """
-        all_nodes = [node.name for node in action_chain.chain]
-        return all_nodes
+        return [node.name for node in action_chain.chain]
 
     @staticmethod
     def _get_all_on_success_nodes(action_chain):
         """
         Return names for all the tasks referenced in "on-success".
         """
-        on_success_nodes = set([node.on_success for node in action_chain.chain])
-        return on_success_nodes
+        return {node.on_success for node in action_chain.chain}
 
     @staticmethod
     def _get_all_on_failure_nodes(action_chain):
         """
         Return names for all the tasks referenced in "on-failure".
         """
-        on_failure_nodes = set([node.on_failure for node in action_chain.chain])
-        return on_failure_nodes
+        return {node.on_failure for node in action_chain.chain}
 
     def _is_valid_node_name(self, all_node_names, node_name):
         """
@@ -731,12 +728,10 @@ class ActionChainRunner(ActionRunner):
             results=context_result, chain_vars=self.chain_holder.vars,
             chain_context={'parent': parent_context})
 
-        liveaction = self._build_liveaction_object(
+        return self._build_liveaction_object(
             action_node=action_node,
             resolved_params=resolved_params,
             parent_context=parent_context)
-
-        return liveaction
 
     def _run_action(self, liveaction, wait_for_completion=True, sleep_delay=1.0):
         """
@@ -800,8 +795,7 @@ class ActionChainRunner(ActionRunner):
     def _get_notify(self, action_node):
         if action_node.name not in self._skip_notify_tasks:
             if action_node.notify:
-                task_notify = NotificationsHelper.to_model(action_node.notify)
-                return task_notify
+                return NotificationsHelper.to_model(action_node.notify)
             elif self._chain_notify:
                 return self._chain_notify
 
@@ -847,11 +841,7 @@ class ActionChainRunner(ActionRunner):
         else:
             result['state'] = liveaction_db.status
 
-        if error:
-            result['result'] = error
-        else:
-            result['result'] = liveaction_db.result
-
+        result['result'] = error or liveaction_db.result
         return result
 
 

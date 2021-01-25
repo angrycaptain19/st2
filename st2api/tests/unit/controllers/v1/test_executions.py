@@ -521,7 +521,7 @@ class ActionExecutionControllerTestCase(BaseActionExecutionControllerTestCase, F
         self.assertEqual(post_resp.status_int, 201)
 
         # Similar to test_post_delete, only twice
-        for i in range(2):
+        for _ in range(2):
             delete_resp = self._do_delete(self._get_actionexecution_id(post_resp))
             self.assertEqual(delete_resp.status_int, 200)
             self.assertEqual(delete_resp.json['status'], 'canceled')
@@ -1404,9 +1404,10 @@ class ActionExecutionControllerTestCase(BaseActionExecutionControllerTestCase, F
         self.assertEqual(resp.status_int, 200)
         self.assertEqual(resp.json, None)
 
-        data = {}
-        data['status'] = action_constants.LIVEACTION_STATUS_SUCCEEDED
-        data['result'] = {'foo': 'bar'}
+        data = {
+            'status': action_constants.LIVEACTION_STATUS_SUCCEEDED,
+            'result': {'foo': 'bar'},
+        }
 
         resp = self.app.put_json('/v1/executions/%s' % (exec_id), data)
         self.assertEqual(resp.status_int, 200)

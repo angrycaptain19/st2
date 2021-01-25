@@ -650,10 +650,7 @@ class ParamikoSSHClientTestCase(unittest2.TestCase):
 
             def mock_recv_ready():
                 chan.recv_counter += 1
-                if chan.recv_counter < 2:
-                    return True
-
-                return False
+                return chan.recv_counter < 2
             return mock_recv_ready
 
         def mock_recv_stderr_ready_factory(chan):
@@ -661,10 +658,7 @@ class ParamikoSSHClientTestCase(unittest2.TestCase):
 
             def mock_recv_stderr_ready():
                 chan.recv_stderr_counter += 1
-                if chan.recv_stderr_counter < 2:
-                    return True
-
-                return False
+                return chan.recv_stderr_counter < 2
             return mock_recv_stderr_ready
 
         mock_chan.recv_ready = mock_recv_ready_factory(mock_chan)

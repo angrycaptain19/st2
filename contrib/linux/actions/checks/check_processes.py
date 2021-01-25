@@ -106,11 +106,7 @@ class CheckProcs(object):
 
 
 if __name__ == '__main__':
-    if "pidlist" in sys.argv:
-        pidlist = True
-    else:
-        pidlist = False
-
+    pidlist = "pidlist" in sys.argv
     foo = CheckProcs()
     foo.setup(debug=False, pidlist=pidlist)
     foo.run(sys.argv[1], sys.argv[2])

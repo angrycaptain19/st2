@@ -42,8 +42,7 @@ def filter_none_values(value):
     Filter out string "None" values from the provided dict.
     :rtype: ``dict``
     """
-    result = dict([(k, v) for k, v in value.items() if v != "None"])
-    return result
+    return dict([(k, v) for k, v in value.items() if v != "None"])
 
 
 def format_result(item):
@@ -77,11 +76,10 @@ class St2RegisterAction(Action):
         if packs:
             method_kwargs['packs'] = packs
 
-        result = self._run_client_method(method=self.client.packs.register,
+        # TODO: make sure to return proper model
+        return self._run_client_method(method=self.client.packs.register,
                                          method_kwargs=method_kwargs,
                                          format_func=format_result)
-        # TODO: make sure to return proper model
-        return result
 
     def _get_client(self):
         base_url, api_url, auth_url = self._get_st2_urls()
@@ -122,8 +120,7 @@ class St2RegisterAction(Action):
         return token
 
     def _get_cacert(self):
-        cacert = self.config.get('cacert', None)
-        return cacert
+        return self.config.get('cacert', None)
 
     def _run_client_method(self, method, method_kwargs, format_func, format_kwargs=None):
         """

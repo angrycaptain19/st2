@@ -105,8 +105,7 @@ class ParamikoRemoteScriptRunner(BaseParallelSSHRunner):
                                                          remote_path=remote_dir,
                                                          mirror_local_mode=True)
 
-        result = mkdir_result or put_result_1 or put_result_2
-        return result
+        return mkdir_result or put_result_1 or put_result_2
 
     def _run_script_on_remote_host(self, remote_action):
         command = remote_action.get_full_command_string()
@@ -151,14 +150,13 @@ class ParamikoRemoteScriptRunner(BaseParallelSSHRunner):
 
     @staticmethod
     def _generate_error_results(error, tb):
-        error_dict = {
+        return {
             'error': error,
             'traceback': ''.join(traceback.format_tb(tb, 20)) if tb else '',
             'failed': True,
             'succeeded': False,
             'return_code': 255
         }
-        return error_dict
 
 
 def get_runner():

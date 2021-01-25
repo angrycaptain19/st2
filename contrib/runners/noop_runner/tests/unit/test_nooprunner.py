@@ -51,8 +51,8 @@ class TestNoopRunner(TestCase):
         runner.action_name = action_db.name
         runner.liveaction_id = uuid.uuid4().hex
         runner.entry_point = None
-        runner.context = dict()
-        runner.callback = dict()
+        runner.context = {}
+        runner.callback = {}
         runner.libs_dir_path = None
         runner.auth_token = mock.Mock()
         runner.auth_token.token = 'mock-token'

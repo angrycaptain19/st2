@@ -98,7 +98,7 @@ def check_pip_version():
 
 
 def load_requirements(file_path):
-    return tuple((r for r in parse_requirements(file_path, session=False)))
+    return tuple(parse_requirements(file_path, session=False))
 
 
 def locate_file(path, must_exist=False):
@@ -202,11 +202,7 @@ if __name__ == '__main__':
     check_pip_version()
     args = parse_args()
 
-    if args['skip']:
-        skip = args['skip'].split(',')
-    else:
-        skip = None
-
+    skip = args['skip'].split(',') if args['skip'] else None
     write_requirements(sources=args['source_requirements'],
                        fixed_requirements=args['fixed_requirements'],
                        output_file=args['output_file'],
